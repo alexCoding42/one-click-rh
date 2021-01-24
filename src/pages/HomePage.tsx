@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  AlertStatus,
   Box,
   Button,
   Center,
@@ -7,51 +8,123 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   HStack,
   Radio,
   RadioGroup,
   Select,
+  Stack,
   Text,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import { Field, Form, Formik } from 'formik';
+import { hourOptions, themesAndSubthemes } from '../data';
+
+import { DataStore } from '@aws-amplify/datastore';
+import { Appointment } from '../models';
 
 interface IFormInputs {
-  questionTheme: string;
-  subQuestionTheme: string;
-  isRhRequestClosed: boolean;
-  contactPreference: boolean;
-  questionBody: string;
-  inputHour: string;
+  theme: string;
+  subTheme: string;
+  closedRequest: string;
+  contactPreference: string;
+  precision: string;
+  hour: string;
 }
 
+const initialValues: IFormInputs = {
+  theme: '',
+  subTheme: '',
+  closedRequest: '',
+  contactPreference: '',
+  precision: '',
+  hour: '',
+};
+
+const fieldRequired: string = 'Ce champ est obligatoire.';
+
+const formSchema = Yup.object().shape({
+  theme: Yup.string().required(fieldRequired),
+  subTheme: Yup.string().required(fieldRequired),
+  closedRequest: Yup.string().required(fieldRequired),
+  contactPreference: Yup.string().required(fieldRequired),
+  precision: Yup.string().required(fieldRequired),
+  hour: Yup.string().required(fieldRequired),
+});
+
 const HomePage = () => {
-  const { register, errors, formState, handleSubmit } = useForm<IFormInputs>();
+  const toast = useToast();
 
-  const [closeRhRequestValue, setCloseRhRequestValue] = useState<string>('');
-  const [contactValue, setContactValue] = useState<string>('');
-  const [hourValue, setHourValue] = useState<string>('');
+  const [closedRequest, setClosedRequest] = useState<string>('');
+  const [contactPreference, setContactPreference] = useState<string>('');
+  const [hour, setHour] = useState<string>('');
+  const [themes, setThemes] = useState<string[]>([]);
+  const [subThemes, setSubThemes] = useState<any[]>([]);
+  const [theme, setTheme] = useState<string | null>(null);
 
-  const hourOptions = [
-    '9:30',
-    '10:30',
-    '10:45',
-    '11:00',
-    '11:15',
-    '11:30',
-    '12:15',
-    '12:30',
-    '12:45',
-  ];
-
-  const onSubmit: SubmitHandler<IFormInputs> = (data) => console.log(data);
-
-  const isRequired = (value: string) => {
-    if (!value) {
-      return 'This field is required';
-    } else return true;
+  const handleChangeSubTheme = (theme: string) => {
+    setTheme(theme.toUpperCase());
   };
+
+  const showToast = (
+    title: string,
+    description: string,
+    status: AlertStatus
+  ) => {
+    toast({
+      title,
+      description,
+      status,
+      duration: 5000,
+      position: 'top-right',
+      isClosable: true,
+    });
+  };
+
+  const onSubmit = async (values: IFormInputs) => {
+    try {
+      const appointment = { ...values };
+      const newAppointment = await DataStore.save(new Appointment(appointment));
+
+      showToast(
+        'Rendez-vous',
+        'Votre rendez-vous a été créé avec succès',
+        'success'
+      );
+
+      return newAppointment;
+    } catch (error) {
+      showToast(
+        'Rendez-vous',
+        'Erreur lors de la création du rendez-vous',
+        'error'
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (themesAndSubthemes) {
+      const themesData = Object.entries(themesAndSubthemes).map(
+        (theme: any) => theme[0]
+      );
+      setThemes(themesData);
+    }
+
+    if (theme) {
+      const subThemesData = Object.entries(themesAndSubthemes).filter(
+        (subTheme: any) => subTheme[0] === theme
+      );
+
+      if (subThemesData) {
+        setSubThemes(subThemesData[0][1]);
+      }
+    } else {
+      setSubThemes([]);
+    }
+  }, [theme]);
 
   return (
     <Container maxW='6xl'>
@@ -73,190 +146,232 @@ const HomePage = () => {
             </Text>
           </Center>
         </Box>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Box>
-            <HStack>
-              <Box mb={8}>
-                <FormControl
-                  id='questionTheme'
-                  isInvalid={!!errors.questionTheme}
-                >
-                  <FormLabel>Thème de votre question</FormLabel>
-                  <Select
-                    name='questionTheme'
-                    placeholder='---'
-                    ref={register({ validate: isRequired })}
-                  >
-                    <option value='option1'>Accident du travail</option>
-                    <option value='option2'>Acompte sur salaire</option>
-                    <option value='option3'>
-                      Allocations enfants (vacances, étude, frais de garde,
-                      handicap)
-                    </option>
-                  </Select>
-                  <FormErrorMessage>
-                    {errors.questionTheme && errors.questionTheme.message}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={8}>
-                <FormControl
-                  id='subQuestionTheme'
-                  isInvalid={!!errors.subQuestionTheme}
-                >
-                  <FormLabel>Sous thème de votre question</FormLabel>
-                  <Select
-                    name='subQuestionTheme'
-                    placeholder='---'
-                    ref={register({ validate: isRequired })}
-                  >
-                    <option value='option1'>Accident du travail</option>
-                    <option value='option2'>
-                      Demander un acompte sur salaire
-                    </option>
-                    <option value='option3'>
-                      Déclarer mes enfants à charge
-                    </option>
-                    <option value='option4'>
-                      Déclarer mon changement de modalités de garde
-                    </option>
-                    <option value='option5'>Enfant handicapé</option>
-                  </Select>
-                  <FormErrorMessage>
-                    {errors.subQuestionTheme && errors.subQuestionTheme.message}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-            </HStack>
-          </Box>
-          <Box mb={8}>
-            <FormControl
-              id='isRhRequestClosed'
-              isInvalid={!!errors.isRhRequestClosed}
-            >
-              <FormLabel>
-                Votre question concerne-t-elle une demande RH en cours ou
-                cloturée ?
-              </FormLabel>
-              <RadioGroup
-                name='isRhRequestClosed'
-                onChange={(value: string) => setCloseRhRequestValue(value)}
-                value={closeRhRequestValue}
-              >
-                <HStack>
-                  <Radio
-                    value='0'
-                    ref={register({ validate: isRequired })}
-                    isChecked={'0' === closeRhRequestValue}
-                  >
-                    Non
-                  </Radio>
-                  <Radio
-                    value='1'
-                    ref={register({ validate: isRequired })}
-                    isChecked={'1' === closeRhRequestValue}
-                  >
-                    Oui
-                  </Radio>
-                </HStack>
-              </RadioGroup>
-              <FormErrorMessage>
-                {errors.isRhRequestClosed && errors.isRhRequestClosed.message}
-              </FormErrorMessage>
-            </FormControl>
-            <Text color='gray.400' as='i'>
-              Vous pouvez retrouver le numéro de votre demande RH depuis le
-              portail RH, dans la rubrique mes demandes.
-            </Text>
-          </Box>
-          <Box mb={8}>
-            <FormControl
-              id='contactPreference'
-              isInvalid={!!errors.contactPreference}
-            >
-              <FormLabel>Votre souhaitez être contacté sur :</FormLabel>
-              <RadioGroup
-                name='contactPreference'
-                onChange={(value: string) => setContactValue(value)}
-                value={contactValue}
-              >
-                <HStack>
-                  <Radio
-                    value='0'
-                    ref={register({ validate: isRequired })}
-                    isChecked={'0' === contactValue}
-                  >
-                    Votre ligne professionnelle
-                  </Radio>
-                  <Radio
-                    value='1'
-                    ref={register({ validate: isRequired })}
-                    isChecked={'1' === contactValue}
-                  >
-                    Une autre ligne
-                  </Radio>
-                </HStack>
-              </RadioGroup>
-              <FormErrorMessage>
-                {errors.contactPreference && errors.contactPreference.message}
-              </FormErrorMessage>
-            </FormControl>
-            <Text color='gray.400' as='i'>
-              Le jour du rendez-vous, vous serez contacté sur cette ligne par
-              l'expert RH en charge de votre demande.
-            </Text>
-          </Box>
-          <Box mb={8}>
-            <FormControl isInvalid={!!errors.questionBody}>
-              <FormLabel>Merci de préciser votre question :</FormLabel>
-              <Textarea
-                name='questionBody'
-                ref={register({ validate: isRequired })}
-              />
-              <FormErrorMessage>
-                {errors.questionBody && errors.questionBody.message}
-              </FormErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb={4}>
-            <FormControl id='inputHour' isInvalid={!!errors.inputHour}>
-              <FormLabel>Choisissez votre créneau :</FormLabel>
-              <RadioGroup
-                name='inputHour'
-                onChange={(value: string) => setHourValue(value)}
-                value={hourValue}
-              >
-                <HStack spacing={4} direction='column'>
-                  {hourOptions.map((value, index) => {
-                    return (
-                      <Radio
-                        key={index}
-                        value={value}
-                        ref={register({ validate: isRequired })}
-                        isChecked={value === hourValue}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={formSchema}
+          onSubmit={(values, actions) => {
+            setTimeout(() => {
+              onSubmit(values);
+              actions.setSubmitting(false);
+            }, 1000);
+          }}
+        >
+          {({ isSubmitting, isValid, setFieldValue }) => (
+            <Form>
+              <HStack mb={8}>
+                <Field name='theme'>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={form.errors.theme && form.touched.theme}
+                    >
+                      <FormLabel htmlFor='theme'>
+                        Thème de votre question
+                      </FormLabel>
+                      <Select
+                        {...field}
+                        name='theme'
+                        placeholder='---'
+                        onChange={(e: any) => {
+                          const { value } = e.target;
+                          handleChangeSubTheme(value);
+                          setFieldValue('theme', value);
+                        }}
                       >
-                        {value}
-                      </Radio>
-                    );
-                  })}
-                </HStack>
-              </RadioGroup>
+                        {themes &&
+                          themes.map((theme: any) => (
+                            <option key={theme} value={theme}>
+                              {theme.toLowerCase()}
+                            </option>
+                          ))}
+                      </Select>
+                      <FormErrorMessage>{form.errors.theme}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+                <Field name='subTheme'>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={form.errors.subTheme && form.touched.subTheme}
+                    >
+                      <FormLabel htmlFor='subTheme'>
+                        Sous thème de votre question
+                      </FormLabel>
+                      <Select {...field} name='subTheme' placeholder='---'>
+                        {subThemes &&
+                          subThemes.map((subTheme: any) => (
+                            <option key={subTheme.id} value={subTheme.subTheme}>
+                              {subTheme.subTheme.toLowerCase()}
+                            </option>
+                          ))}
+                      </Select>
+                      <FormErrorMessage>
+                        {form.errors.subTheme}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+              </HStack>
 
-              <FormErrorMessage>
-                {errors.inputHour && errors.inputHour.message}
-              </FormErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb={4}>
-            <Button
-              type='submit'
-              colorScheme='blue'
-              isLoading={formState.isSubmitting}
-            >
-              Prendre rendez-vous
-            </Button>
-          </Box>
-        </form>
+              <Stack mb={8}>
+                <Field name='closedRequest'>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={
+                        form.errors.closedRequest && form.touched.closedRequest
+                      }
+                    >
+                      <FormLabel>
+                        Votre question concerne-t-elle une demande RH en cours
+                        ou cloturée ?
+                      </FormLabel>
+                      <RadioGroup
+                        {...field}
+                        name='closedRequest'
+                        onChange={(request: string) => {
+                          setClosedRequest(request);
+                          setFieldValue('closedRequest', request);
+                        }}
+                      >
+                        <HStack>
+                          <Radio
+                            value='Non'
+                            isChecked={'Non' === closedRequest}
+                          >
+                            Non
+                          </Radio>
+                          <Radio
+                            value='Oui'
+                            isChecked={'Oui' === closedRequest}
+                          >
+                            Oui
+                          </Radio>
+                        </HStack>
+                      </RadioGroup>
+                      <FormHelperText>
+                        Vous pouvez retrouver le numéro de votre demande RH
+                        depuis le portail RH, dans la rubrique mes demandes.
+                      </FormHelperText>
+                      <FormErrorMessage>
+                        {form.errors.closedRequest}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+              </Stack>
+
+              <Stack mb={8}>
+                <Field name='contactPreference'>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={
+                        form.errors.contactPreference &&
+                        form.touched.contactPreference
+                      }
+                    >
+                      <FormLabel>Votre souhaitez être contacté sur :</FormLabel>
+                      <RadioGroup
+                        {...field}
+                        name='contactPreference'
+                        onChange={(contact: string) => {
+                          setContactPreference(contact);
+                          setFieldValue('contactPreference', contact);
+                        }}
+                      >
+                        <HStack>
+                          <Radio
+                            value='proLine'
+                            isChecked={'proLine' === contactPreference}
+                          >
+                            Votre ligne professionnelle
+                          </Radio>
+                          <Radio
+                            value='otherLine'
+                            isChecked={'otherLine' === contactPreference}
+                          >
+                            Une autre ligne
+                          </Radio>
+                        </HStack>
+                      </RadioGroup>
+                      <FormHelperText>
+                        Le jour du rendez-vous, vous serez contacté sur cette
+                        ligne par l'expert RH en charge de votre demande.
+                      </FormHelperText>
+                      <FormErrorMessage>
+                        {form.errors.contactPreference}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+              </Stack>
+
+              <Stack mb={8}>
+                <Field name='precision'>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={
+                        form.errors.precision && form.touched.precision
+                      }
+                    >
+                      <FormLabel htmlFor='precision'>
+                        Merci de préciser votre question :
+                      </FormLabel>
+                      <Textarea {...field} name='precision' />
+                      <FormErrorMessage>
+                        {form.errors.precision}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+              </Stack>
+
+              <Stack mb={8}>
+                <Field name='hour'>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={form.errors.hour && form.touched.hour}
+                    >
+                      <FormLabel htmlFor='hour'>
+                        Choisissez votre créneau :
+                      </FormLabel>
+                      <RadioGroup
+                        {...field}
+                        name='hour'
+                        onChange={(hourValue: string) => {
+                          setHour(hourValue);
+                          setFieldValue('hour', hourValue);
+                        }}
+                      >
+                        <HStack spacing={4} direction='column'>
+                          {hourOptions.map((value, index) => {
+                            return (
+                              <Radio
+                                key={index}
+                                value={value}
+                                isChecked={value === hour}
+                              >
+                                {value}
+                              </Radio>
+                            );
+                          })}
+                        </HStack>
+                      </RadioGroup>
+                      <FormErrorMessage>{form.errors.hour}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+              </Stack>
+
+              <Button
+                type='submit'
+                colorScheme='blue'
+                isLoading={isSubmitting}
+                isDisabled={!isValid}
+              >
+                Prendre rendez-vous
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </Flex>
     </Container>
   );
