@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  AlertStatus,
   Box,
   Button,
   Center,
@@ -16,10 +17,14 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import { hourOptions, themesAndSubthemes } from '../data';
+
+import { DataStore } from '@aws-amplify/datastore';
+import { Appointment } from '../models';
 
 interface IFormInputs {
   theme: string;
@@ -51,6 +56,8 @@ const formSchema = Yup.object().shape({
 });
 
 const HomePage = () => {
+  const toast = useToast();
+
   const [closedRequest, setClosedRequest] = useState<string>('');
   const [contactPreference, setContactPreference] = useState<string>('');
   const [hour, setHour] = useState<string>('');
@@ -62,8 +69,40 @@ const HomePage = () => {
     setTheme(theme.toUpperCase());
   };
 
-  const onSubmit = (values: IFormInputs) => {
-    console.log(values);
+  const showToast = (
+    title: string,
+    description: string,
+    status: AlertStatus
+  ) => {
+    toast({
+      title,
+      description,
+      status,
+      duration: 5000,
+      position: 'top-right',
+      isClosable: true,
+    });
+  };
+
+  const onSubmit = async (values: IFormInputs) => {
+    try {
+      const appointment = { ...values };
+      const newAppointment = await DataStore.save(new Appointment(appointment));
+
+      showToast(
+        'Rendez-vous',
+        'Votre rendez-vous a été créé avec succès',
+        'success'
+      );
+
+      return newAppointment;
+    } catch (error) {
+      showToast(
+        'Rendez-vous',
+        'Erreur lors de la création du rendez-vous',
+        'error'
+      );
+    }
   };
 
   useEffect(() => {
