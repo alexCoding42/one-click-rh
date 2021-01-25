@@ -19,21 +19,13 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import { hourOptions, themesAndSubthemes } from '../data';
 
 import { DataStore } from '@aws-amplify/datastore';
 import { Appointment } from '../models';
-
-interface IFormInputs {
-  theme: string;
-  subTheme: string;
-  closedRequest: string;
-  contactPreference: string;
-  precision: string;
-  hour: string;
-}
+import { formSchema } from '../utils/validationSchema/formSchema';
+import { IFormInputs } from '../types';
 
 const initialValues: IFormInputs = {
   theme: '',
@@ -44,16 +36,9 @@ const initialValues: IFormInputs = {
   hour: '',
 };
 
-const fieldRequired: string = 'Ce champ est obligatoire.';
-
-const formSchema = Yup.object().shape({
-  theme: Yup.string().required(fieldRequired),
-  subTheme: Yup.string().required(fieldRequired),
-  closedRequest: Yup.string().required(fieldRequired),
-  contactPreference: Yup.string().required(fieldRequired),
-  precision: Yup.string().required(fieldRequired),
-  hour: Yup.string().required(fieldRequired),
-});
+const APPOINTMENT_TITLE = 'Rendez-vous';
+const APPOINTMENT_CREATE_SUCCESS = 'Votre rendez-vous a été créé avec succès';
+const APPOINTMENT_CREATE_ERROR = 'Erreur lors de la création du rendez-vous';
 
 const HomePage = () => {
   const toast = useToast();
@@ -64,46 +49,6 @@ const HomePage = () => {
   const [themes, setThemes] = useState<string[]>([]);
   const [subThemes, setSubThemes] = useState<any[]>([]);
   const [theme, setTheme] = useState<string | null>(null);
-
-  const handleChangeSubTheme = (theme: string) => {
-    setTheme(theme.toUpperCase());
-  };
-
-  const showToast = (
-    title: string,
-    description: string,
-    status: AlertStatus
-  ) => {
-    toast({
-      title,
-      description,
-      status,
-      duration: 5000,
-      position: 'top-right',
-      isClosable: true,
-    });
-  };
-
-  const onSubmit = async (values: IFormInputs) => {
-    try {
-      const appointment = { ...values };
-      const newAppointment = await DataStore.save(new Appointment(appointment));
-
-      showToast(
-        'Rendez-vous',
-        'Votre rendez-vous a été créé avec succès',
-        'success'
-      );
-
-      return newAppointment;
-    } catch (error) {
-      showToast(
-        'Rendez-vous',
-        'Erreur lors de la création du rendez-vous',
-        'error'
-      );
-    }
-  };
 
   useEffect(() => {
     if (themesAndSubthemes) {
@@ -125,6 +70,38 @@ const HomePage = () => {
       setSubThemes([]);
     }
   }, [theme]);
+
+  const handleChangeSubTheme = (theme: string) => {
+    setTheme(theme.toUpperCase());
+  };
+
+  const handleSubmit = async (values: IFormInputs) => {
+    try {
+      const appointment = { ...values };
+      const newAppointment = await DataStore.save(new Appointment(appointment));
+
+      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_SUCCESS, 'success');
+
+      return newAppointment;
+    } catch (error) {
+      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
+    }
+  };
+
+  const showToast = (
+    title: string,
+    description: string,
+    status: AlertStatus
+  ) => {
+    toast({
+      title,
+      description,
+      status,
+      duration: 5000,
+      position: 'top-right',
+      isClosable: true,
+    });
+  };
 
   return (
     <Container maxW='6xl'>
@@ -150,10 +127,8 @@ const HomePage = () => {
           initialValues={initialValues}
           validationSchema={formSchema}
           onSubmit={(values, actions) => {
-            setTimeout(() => {
-              onSubmit(values);
-              actions.setSubmitting(false);
-            }, 1000);
+            handleSubmit(values);
+            actions.setSubmitting(false);
           }}
         >
           {({ isSubmitting, isValid, setFieldValue }) => (
