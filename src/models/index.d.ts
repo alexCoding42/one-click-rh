@@ -12,6 +12,8 @@ export declare class Appointment {
   readonly contactPreference: string;
   readonly precision: string;
   readonly hour: string;
+  readonly requestId?: string;
+  readonly otherLinePhoneNumber?: string;
   constructor(init: ModelInit<Appointment>);
   static copyOf(source: Appointment, mutator: (draft: MutableModel<Appointment>) => MutableModel<Appointment> | void): Appointment;
 }

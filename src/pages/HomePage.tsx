@@ -11,6 +11,9 @@ import {
   FormHelperText,
   FormLabel,
   HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Radio,
   RadioGroup,
   Select,
@@ -20,6 +23,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
+import { AiOutlinePhone as PhoneIcon } from 'react-icons/ai';
 import { hourOptions, themesAndSubthemes } from '../data';
 
 import { DataStore } from '@aws-amplify/datastore';
@@ -31,7 +35,9 @@ const initialValues: IFormInputs = {
   theme: '',
   subTheme: '',
   closedRequest: '',
+  requestId: '',
   contactPreference: '',
+  otherLinePhoneNumber: '',
   precision: '',
   hour: '',
 };
@@ -49,6 +55,7 @@ const HomePage = () => {
   const [themes, setThemes] = useState<string[]>([]);
   const [subThemes, setSubThemes] = useState<any[]>([]);
   const [theme, setTheme] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     if (themesAndSubthemes) {
@@ -77,11 +84,12 @@ const HomePage = () => {
 
   const handleSubmit = async (values: IFormInputs) => {
     try {
+      setIsSubmitting(true);
       const appointment = { ...values };
       const newAppointment = await DataStore.save(new Appointment(appointment));
 
       showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_SUCCESS, 'success');
-
+      setIsSubmitting(false);
       return newAppointment;
     } catch (error) {
       showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
@@ -128,10 +136,9 @@ const HomePage = () => {
           validationSchema={formSchema}
           onSubmit={(values, actions) => {
             handleSubmit(values);
-            actions.setSubmitting(false);
           }}
         >
-          {({ isSubmitting, isValid, setFieldValue }) => (
+          {({ isValid, setFieldValue }) => (
             <Form>
               <HStack mb={8}>
                 <Field name='theme'>
@@ -187,7 +194,7 @@ const HomePage = () => {
                 </Field>
               </HStack>
 
-              <Stack mb={8}>
+              <Stack align='center' mb={8}>
                 <Field name='closedRequest'>
                   {({ field, form }: any) => (
                     <FormControl
@@ -205,6 +212,7 @@ const HomePage = () => {
                         onChange={(request: string) => {
                           setClosedRequest(request);
                           setFieldValue('closedRequest', request);
+                          setFieldValue('requestId', '');
                         }}
                       >
                         <HStack>
@@ -220,8 +228,31 @@ const HomePage = () => {
                           >
                             Oui
                           </Radio>
+                          <Box width='40%'>
+                            <Field name='requestId'>
+                              {({ field, form }: any) => (
+                                <FormControl
+                                  isInvalid={
+                                    form.errors.requestId &&
+                                    form.touched.requestId
+                                  }
+                                >
+                                  <Input
+                                    {...field}
+                                    type='text'
+                                    placeholder='Préciser le n° de la demande'
+                                    isDisabled={closedRequest !== 'Oui'}
+                                  />
+                                  <FormErrorMessage>
+                                    {form.errors.requestId}
+                                  </FormErrorMessage>
+                                </FormControl>
+                              )}
+                            </Field>
+                          </Box>
                         </HStack>
                       </RadioGroup>
+
                       <FormHelperText>
                         Vous pouvez retrouver le numéro de votre demande RH
                         depuis le portail RH, dans la rubrique mes demandes.
@@ -250,6 +281,7 @@ const HomePage = () => {
                         onChange={(contact: string) => {
                           setContactPreference(contact);
                           setFieldValue('contactPreference', contact);
+                          setFieldValue('otherLinePhoneNumber', '');
                         }}
                       >
                         <HStack>
@@ -265,6 +297,34 @@ const HomePage = () => {
                           >
                             Une autre ligne
                           </Radio>
+                          <Field name='otherLinePhoneNumber'>
+                            {({ field, form }: any) => (
+                              <FormControl
+                                isInvalid={
+                                  form.errors.otherLinePhoneNumber &&
+                                  form.touched.otherLinePhoneNumber
+                                }
+                              >
+                                <InputGroup width='30%'>
+                                  <InputLeftElement
+                                    pointerEvents='none'
+                                    children={<PhoneIcon color='gray.300' />}
+                                  />
+                                  <Input
+                                    {...field}
+                                    type='tel'
+                                    placeholder='XX XX XX XX XX'
+                                    isDisabled={
+                                      contactPreference !== 'otherLine'
+                                    }
+                                  />
+                                </InputGroup>
+                                <FormErrorMessage>
+                                  {form.errors.otherLinePhoneNumber}
+                                </FormErrorMessage>
+                              </FormControl>
+                            )}
+                          </Field>
                         </HStack>
                       </RadioGroup>
                       <FormHelperText>
