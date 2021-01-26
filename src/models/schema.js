@@ -51,6 +51,20 @@ export const schema = {
                     "type": "String",
                     "isRequired": true,
                     "attributes": []
+                },
+                "requestId": {
+                    "name": "requestId",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "otherLinePhoneNumber": {
+                    "name": "otherLinePhoneNumber",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -197,5 +211,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "f93860fe998512f7c2c57afa5b7b804c"
+    "version": "ce7af62bc0729de423ed2e924c15ec5d"
 };
