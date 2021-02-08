@@ -1,4 +1,5 @@
-export interface IFormInputs {
+export interface IAppointment {
+  id: string;
   theme: string;
   subTheme: string;
   closedRequest: string;

@@ -29,9 +29,10 @@ import { hourOptions, themesAndSubthemes } from '../data';
 import { DataStore } from '@aws-amplify/datastore';
 import { Appointment } from '../models';
 import { formSchema } from '../utils/validationSchema/formSchema';
-import { IFormInputs } from '../types';
+import { IAppointment } from '../types';
 
-const initialValues: IFormInputs = {
+const initialValues: IAppointment = {
+  id: '',
   theme: '',
   subTheme: '',
   closedRequest: '',
@@ -82,7 +83,7 @@ const HomePage = () => {
     setTheme(theme.toUpperCase());
   };
 
-  const handleSubmit = async (values: IFormInputs) => {
+  const handleSubmit = async (values: IAppointment) => {
     try {
       setIsSubmitting(true);
       const appointment = { ...values };
@@ -112,7 +113,7 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxW='6xl'>
+    <Container maxW='6xl' my={4}>
       <Flex direction='column'>
         <Box mb={8}>
           <Center>
