@@ -30,6 +30,11 @@ import { DataStore } from '@aws-amplify/datastore';
 import { Appointment } from '../models';
 import { formSchema } from '../utils/validationSchema/formSchema';
 import { IAppointment } from '../types';
+import {
+  APPOINTMENT_CREATE_ERROR,
+  APPOINTMENT_CREATE_SUCCESS,
+  APPOINTMENT_TITLE,
+} from '../constants';
 
 const initialValues: IAppointment = {
   id: '',
@@ -42,10 +47,6 @@ const initialValues: IAppointment = {
   precision: '',
   hour: '',
 };
-
-const APPOINTMENT_TITLE = 'Rendez-vous';
-const APPOINTMENT_CREATE_SUCCESS = 'Votre rendez-vous a été créé avec succès';
-const APPOINTMENT_CREATE_ERROR = 'Erreur lors de la création du rendez-vous';
 
 const HomePage = () => {
   const toast = useToast();
@@ -94,6 +95,7 @@ const HomePage = () => {
       return newAppointment;
     } catch (error) {
       showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
+      setIsSubmitting(false);
     }
   };
 
