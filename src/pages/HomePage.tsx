@@ -29,9 +29,15 @@ import { hourOptions, themesAndSubthemes } from '../data';
 import { DataStore } from '@aws-amplify/datastore';
 import { Appointment } from '../models';
 import { formSchema } from '../utils/validationSchema/formSchema';
-import { IFormInputs } from '../types';
+import { IAppointment } from '../types';
+import {
+  APPOINTMENT_CREATE_ERROR,
+  APPOINTMENT_CREATE_SUCCESS,
+  APPOINTMENT_TITLE,
+} from '../constants';
 
-const initialValues: IFormInputs = {
+const initialValues: IAppointment = {
+  id: '',
   theme: '',
   subTheme: '',
   closedRequest: '',
@@ -41,10 +47,6 @@ const initialValues: IFormInputs = {
   precision: '',
   hour: '',
 };
-
-const APPOINTMENT_TITLE = 'Rendez-vous';
-const APPOINTMENT_CREATE_SUCCESS = 'Votre rendez-vous a été créé avec succès';
-const APPOINTMENT_CREATE_ERROR = 'Erreur lors de la création du rendez-vous';
 
 const HomePage = () => {
   const toast = useToast();
@@ -82,7 +84,7 @@ const HomePage = () => {
     setTheme(theme.toUpperCase());
   };
 
-  const handleSubmit = async (values: IFormInputs) => {
+  const handleSubmit = async (values: IAppointment) => {
     try {
       setIsSubmitting(true);
       const appointment = { ...values };
@@ -93,6 +95,7 @@ const HomePage = () => {
       return newAppointment;
     } catch (error) {
       showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
+      setIsSubmitting(false);
     }
   };
 
@@ -112,7 +115,7 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxW='6xl'>
+    <Container maxW='6xl' my={4}>
       <Flex direction='column'>
         <Box mb={8}>
           <Center>
