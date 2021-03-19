@@ -24,6 +24,8 @@ import {
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 import { AiOutlinePhone as PhoneIcon } from 'react-icons/ai';
+import Lottie from 'lottie-react';
+import calendarBooking from '../assets/calendarBooking.json';
 import { hourOptions, themesAndSubthemes } from '../data';
 
 import { DataStore } from '@aws-amplify/datastore';
@@ -133,6 +135,17 @@ const HomePage = () => {
               Les experts de l'administration et de la paie vous répondent
             </Text>
           </Center>
+          <Center>
+            <Box width='800px'>
+              <Lottie animationData={calendarBooking} />
+            </Box>
+          </Center>
+          <Box mt={4}>
+            <Text as='i'>
+              Tous les champs de saisie sont obligatoires pour prendre un
+              rendez-vous
+            </Text>
+          </Box>
         </Box>
         <Formik
           initialValues={initialValues}
@@ -401,7 +414,7 @@ const HomePage = () => {
 
               <Button
                 type='submit'
-                colorScheme='blue'
+                colorScheme='whatsapp'
                 isLoading={isSubmitting}
                 isDisabled={!isValid}
               >
