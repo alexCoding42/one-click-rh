@@ -61,8 +61,7 @@ const CustomForm: FC<CustomFormProps> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={customFormValidationSchema}
-      onSubmit={(values, actions) => {
-        console.log(values);
+      onSubmit={(values) => {
         handleSubmit(values);
       }}
     >
@@ -150,14 +149,28 @@ const CustomForm: FC<CustomFormProps> = ({
                       >
                         <HStack>
                           <Radio
+                            key='no'
                             value='Non'
                             isChecked={'Non' === closedRequest}
+                            bg={
+                              form.errors.closedRequest &&
+                              form.touched.closedRequest
+                                ? 'red.500'
+                                : 'transparent'
+                            }
                           >
                             Non
                           </Radio>
                           <Radio
+                            key='yes'
                             value='Oui'
                             isChecked={'Oui' === closedRequest}
+                            bg={
+                              form.errors.closedRequest &&
+                              form.touched.closedRequest
+                                ? 'red.500'
+                                : 'transparent'
+                            }
                           >
                             Oui
                           </Radio>
@@ -230,14 +243,28 @@ const CustomForm: FC<CustomFormProps> = ({
                       >
                         <HStack>
                           <Radio
+                            key='proLine'
                             value='proLine'
                             isChecked={'proLine' === contactPreference}
+                            bg={
+                              form.errors.contactPreference &&
+                              form.touched.contactPreference
+                                ? 'red.500'
+                                : 'transparent'
+                            }
                           >
                             Votre ligne professionnelle
                           </Radio>
                           <Radio
+                            key='otherLine'
                             value='otherLine'
                             isChecked={'otherLine' === contactPreference}
+                            bg={
+                              form.errors.contactPreference &&
+                              form.touched.contactPreference
+                                ? 'red.500'
+                                : 'transparent'
+                            }
                           >
                             Une autre ligne
                           </Radio>
@@ -303,7 +330,7 @@ const CustomForm: FC<CustomFormProps> = ({
             </Field>
           </Stack>
 
-          <Stack hidden mb={8}>
+          <Stack mb={8}>
             <Field name='hour'>
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.hour && form.touched.hour}>
@@ -318,19 +345,24 @@ const CustomForm: FC<CustomFormProps> = ({
                       setFieldValue('hour', hourValue);
                     }}
                   >
-                    <HStack spacing={4} direction='column'>
+                    <SimpleGrid columns={{ base: 2, sm: 1 }}>
                       {hourOptions.map((value, index) => {
                         return (
                           <Radio
                             key={index}
                             value={value}
                             isChecked={value === hour}
+                            bg={
+                              form.errors.hour && form.touched.hour
+                                ? 'red.500'
+                                : 'transparent'
+                            }
                           >
                             {value}
                           </Radio>
                         );
                       })}
-                    </HStack>
+                    </SimpleGrid>
                   </RadioGroup>
                   <FormErrorMessage>{form.errors.hour}</FormErrorMessage>
                 </FormControl>
