@@ -14,7 +14,7 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { MdMenu as MenuIcon, MdClose as CloseIcon } from 'react-icons/md';
+import { HiMenu as MenuIcon, HiOutlineX as CloseIcon } from 'react-icons/hi';
 
 const Links = [
   { linkName: 'Home', to: '/' },
@@ -67,7 +67,7 @@ const Navbar = () => {
               <Avatar name='Segun Adebayo' src='https://bit.ly/sage-adebayo' />
             </WrapItem>
           </Wrap>
-          <HStack fontSize='xl' marginLeft='20px'>
+          <HStack fontSize={['sm', 'xl']} marginLeft='20px'>
             <Text color='red.500'>Click</Text>
             <Text color='black'> & Kiosque RH</Text>
           </HStack>
