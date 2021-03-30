@@ -15,7 +15,7 @@ const requiredForContactPreference = {
   then: Yup.string().required(otherLinePhoneNumberRequired),
 };
 
-export const formSchema = Yup.object().shape({
+export const customFormValidationSchema = Yup.object().shape({
   theme: Yup.string().required(fieldRequired),
   subTheme: Yup.string().required(fieldRequired),
   closedRequest: Yup.string().required(fieldRequired),
