@@ -7,7 +7,7 @@ import MyAppointmentsPage from './pages/MyAppointmentsPage';
 
 export const App = () => (
   <ChakraProvider theme={theme}>
-    <NavBar />
+    {/* <NavBar /> */}
     <Switch>
       <Route exact path='/' component={HomePage} />
       <Route exact path='/my-appointments' component={MyAppointmentsPage} />

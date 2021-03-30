@@ -3,6 +3,7 @@ import { Field, Form, Formik } from 'formik';
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormHelperText,
@@ -14,6 +15,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  SimpleGrid,
   Stack,
   Textarea,
 } from '@chakra-ui/react';
@@ -66,7 +68,7 @@ const CustomForm: FC<CustomFormProps> = ({
     >
       {({ setFieldValue }) => (
         <Form>
-          <HStack mb={8}>
+          <SimpleGrid columns={{ base: 1, sm: 2 }} spacing='8' mb={8}>
             <Field name='theme'>
               {({ field, form }: any) => (
                 <FormControl
@@ -114,9 +116,9 @@ const CustomForm: FC<CustomFormProps> = ({
                 </FormControl>
               )}
             </Field>
-          </HStack>
+          </SimpleGrid>
 
-          <Stack align='center' mb={8}>
+          <Box mb={8}>
             <Field name='closedRequest'>
               {({ field, form }: any) => (
                 <FormControl
@@ -128,59 +130,77 @@ const CustomForm: FC<CustomFormProps> = ({
                     Votre question concerne-t-elle une demande RH en cours ou
                     cloturée ?
                   </FormLabel>
-                  <RadioGroup
-                    {...field}
-                    name='closedRequest'
-                    onChange={(request: string) => {
-                      setClosedRequest(request);
-                      setFieldValue('closedRequest', request);
-                      setFieldValue('requestId', '');
-                    }}
+                  <Flex
+                    d='flex'
+                    direction={{ base: 'column', sm: 'row' }}
+                    alignItems={{ base: 'initial', sm: 'center' }}
                   >
-                    <HStack>
-                      <Radio value='Non' isChecked={'Non' === closedRequest}>
-                        Non
-                      </Radio>
-                      <Radio value='Oui' isChecked={'Oui' === closedRequest}>
-                        Oui
-                      </Radio>
-                      <Box width='40%'>
-                        <Field name='requestId'>
-                          {({ field, form }: any) => (
-                            <FormControl
-                              isInvalid={
-                                form.errors.requestId && form.touched.requestId
-                              }
-                            >
-                              <Input
-                                {...field}
-                                type='text'
-                                placeholder='Préciser le n° de la demande'
-                                isDisabled={closedRequest !== 'Oui'}
-                              />
-                              <FormErrorMessage>
-                                {form.errors.requestId}
-                              </FormErrorMessage>
-                            </FormControl>
-                          )}
-                        </Field>
-                      </Box>
-                    </HStack>
-                  </RadioGroup>
+                    <Box
+                      width={{ base: '90%', sm: '50%' }}
+                      mb={{ base: 4, sm: 0 }}
+                    >
+                      <RadioGroup
+                        {...field}
+                        name='closedRequest'
+                        onChange={(request: string) => {
+                          setClosedRequest(request);
+                          setFieldValue('closedRequest', request);
+                          setFieldValue('requestId', '');
+                        }}
+                      >
+                        <HStack>
+                          <Radio
+                            value='Non'
+                            isChecked={'Non' === closedRequest}
+                          >
+                            Non
+                          </Radio>
+                          <Radio
+                            value='Oui'
+                            isChecked={'Oui' === closedRequest}
+                          >
+                            Oui
+                          </Radio>
+                        </HStack>
+                      </RadioGroup>
+                      <FormErrorMessage>
+                        {form.errors.closedRequest}
+                      </FormErrorMessage>
+                    </Box>
+
+                    <Box width={{ base: '100%', sm: '40%' }}>
+                      <Field name='requestId'>
+                        {({ field, form }: any) => (
+                          <FormControl
+                            isInvalid={
+                              form.errors.requestId && form.touched.requestId
+                            }
+                          >
+                            <Input
+                              {...field}
+                              type='text'
+                              placeholder='Préciser le n° de la demande'
+                              isDisabled={closedRequest !== 'Oui'}
+                            />
+                            <FormErrorMessage>
+                              {form.errors.requestId}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                    </Box>
+                  </Flex>
 
                   <FormHelperText>
                     Vous pouvez retrouver le numéro de votre demande RH depuis
                     le portail RH, dans la rubrique mes demandes.
                   </FormHelperText>
-                  <FormErrorMessage>
-                    {form.errors.closedRequest}
-                  </FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-          </Stack>
+          </Box>
 
-          <Stack mb={8}>
+          <Box mb={8}>
             <Field name='contactPreference'>
               {({ field, form }: any) => (
                 <FormControl
@@ -190,28 +210,45 @@ const CustomForm: FC<CustomFormProps> = ({
                   }
                 >
                   <FormLabel>Votre souhaitez être contacté sur :</FormLabel>
-                  <RadioGroup
-                    {...field}
-                    name='contactPreference'
-                    onChange={(contact: string) => {
-                      setContactPreference(contact);
-                      setFieldValue('contactPreference', contact);
-                      setFieldValue('otherLinePhoneNumber', '');
-                    }}
+                  <Flex
+                    d='flex'
+                    direction={{ base: 'column', sm: 'row' }}
+                    alignItems={{ base: 'initial', sm: 'center' }}
                   >
-                    <HStack>
-                      <Radio
-                        value='proLine'
-                        isChecked={'proLine' === contactPreference}
+                    <Box
+                      width={{ base: '90%', sm: '50%' }}
+                      mb={{ base: 4, sm: 0 }}
+                    >
+                      <RadioGroup
+                        {...field}
+                        name='contactPreference'
+                        onChange={(contact: string) => {
+                          setContactPreference(contact);
+                          setFieldValue('contactPreference', contact);
+                          setFieldValue('otherLinePhoneNumber', '');
+                        }}
                       >
-                        Votre ligne professionnelle
-                      </Radio>
-                      <Radio
-                        value='otherLine'
-                        isChecked={'otherLine' === contactPreference}
-                      >
-                        Une autre ligne
-                      </Radio>
+                        <HStack>
+                          <Radio
+                            value='proLine'
+                            isChecked={'proLine' === contactPreference}
+                          >
+                            Votre ligne professionnelle
+                          </Radio>
+                          <Radio
+                            value='otherLine'
+                            isChecked={'otherLine' === contactPreference}
+                          >
+                            Une autre ligne
+                          </Radio>
+                        </HStack>
+                      </RadioGroup>
+                      <FormErrorMessage>
+                        {form.errors.contactPreference}
+                      </FormErrorMessage>
+                    </Box>
+
+                    <Box width={{ base: '90%', sm: '50%' }}>
                       <Field name='otherLinePhoneNumber'>
                         {({ field, form }: any) => (
                           <FormControl
@@ -220,7 +257,7 @@ const CustomForm: FC<CustomFormProps> = ({
                               form.touched.otherLinePhoneNumber
                             }
                           >
-                            <InputGroup width='30%'>
+                            <InputGroup>
                               <InputLeftElement
                                 pointerEvents='none'
                                 children={<PhoneIcon color='gray.300' />}
@@ -238,19 +275,17 @@ const CustomForm: FC<CustomFormProps> = ({
                           </FormControl>
                         )}
                       </Field>
-                    </HStack>
-                  </RadioGroup>
+                    </Box>
+                  </Flex>
+
                   <FormHelperText>
                     Le jour du rendez-vous, vous serez contacté sur cette ligne
                     par l'expert RH en charge de votre demande.
                   </FormHelperText>
-                  <FormErrorMessage>
-                    {form.errors.contactPreference}
-                  </FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-          </Stack>
+          </Box>
 
           <Stack mb={8}>
             <Field name='precision'>
@@ -268,7 +303,7 @@ const CustomForm: FC<CustomFormProps> = ({
             </Field>
           </Stack>
 
-          <Stack mb={8}>
+          <Stack hidden mb={8}>
             <Field name='hour'>
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.hour && form.touched.hour}>
