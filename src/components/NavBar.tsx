@@ -43,10 +43,10 @@ const Navbar = () => {
     <Box bg='white' px={4} borderBottom='1px solid' borderColor='gray.300'>
       <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
         <IconButton
-          size={'md'}
+          colorScheme='gray'
           icon={isOpen ? <CloseIcon /> : <MenuIcon />}
-          aria-label={'Open Menu'}
-          display={{ md: !isOpen ? 'none' : 'inherit' }}
+          aria-label='Open Menu'
+          display={{ base: 'flex', sm: !isOpen ? 'none' : '' }}
           onClick={isOpen ? onClose : onOpen}
         />
         <HStack spacing={8} alignItems={'center'}>
@@ -62,7 +62,7 @@ const Navbar = () => {
           </HStack>
         </HStack>
         <Flex alignItems='center'>
-          <Wrap>
+          <Wrap display={{ base: 'none', sm: 'block' }}>
             <WrapItem>
               <Avatar name='Segun Adebayo' src='https://bit.ly/sage-adebayo' />
             </WrapItem>
