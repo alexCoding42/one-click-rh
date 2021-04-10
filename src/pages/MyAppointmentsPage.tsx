@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { DataStore } from '@aws-amplify/datastore';
 import {
   AlertStatus,
@@ -20,6 +21,8 @@ import {
 
 const MyAppointmentsPage = () => {
   const toast = useToast();
+  const history = useHistory();
+
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -27,6 +30,12 @@ const MyAppointmentsPage = () => {
     fetchAppointments();
     // eslint-disable-next-line
   }, []);
+
+  const getNewAppointmentButton = () => (
+    <Button colorScheme='telegram' my={2} onClick={() => history.push('/')}>
+      Create a new appointment
+    </Button>
+  );
 
   const fetchAppointments = async () => {
     try {
@@ -80,8 +89,9 @@ const MyAppointmentsPage = () => {
     );
   }
 
-  return (
-    <Box>
+  return appointments.length ? (
+    <Flex direction='column' alignItems='center' justifyContent='center'>
+      {getNewAppointmentButton()}
       {appointments.map((appointment: IAppointment) => (
         <Flex p={50} w='full' alignItems='center' justifyContent='center'>
           <Box
@@ -123,7 +133,19 @@ const MyAppointmentsPage = () => {
           </Box>
         </Flex>
       ))}
-    </Box>
+    </Flex>
+  ) : (
+    <Flex
+      direction='column'
+      alignItems='center'
+      justifyContent='center'
+      padding={4}
+    >
+      {getNewAppointmentButton()}
+      <Text fontSize='xl' fontWeight='700' textAlign='center'>
+        You don't have any appointment yet. You can create a new one.
+      </Text>
+    </Flex>
   );
 };
 
