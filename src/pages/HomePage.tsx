@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { DataStore } from '@aws-amplify/datastore';
 import {
   AlertStatus,
@@ -23,6 +24,7 @@ import {
 
 const HomePage = () => {
   const toast = useToast();
+  const history = useHistory()
 
   const [themes, setThemes] = useState<string[]>([]);
   const [subThemes, setSubThemes] = useState<any[]>([]);
@@ -63,6 +65,7 @@ const HomePage = () => {
 
       showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_SUCCESS, 'success');
       setIsSubmitting(false);
+      history.push('/my-appointments');
       return newAppointment;
     } catch (error) {
       showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
