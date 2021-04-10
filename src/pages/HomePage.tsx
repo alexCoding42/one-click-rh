@@ -24,7 +24,7 @@ import {
 
 const HomePage = () => {
   const toast = useToast();
-  const history = useHistory()
+  const history = useHistory();
 
   const [themes, setThemes] = useState<string[]>([]);
   const [subThemes, setSubThemes] = useState<any[]>([]);
