@@ -61,8 +61,12 @@ const CustomForm: FC<CustomFormProps> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={customFormValidationSchema}
-      onSubmit={(values) => {
+      onSubmit={(values, { resetForm }) => {
         handleSubmit(values);
+        resetForm()
+        setClosedRequest('')
+        setContactPreference('')
+        setHour('')
       }}
     >
       {({ setFieldValue }) => (
@@ -125,7 +129,7 @@ const CustomForm: FC<CustomFormProps> = ({
                     form.errors.closedRequest && form.touched.closedRequest
                   }
                 >
-                  <FormLabel>
+                  <FormLabel htmlFor='closedRequest'>
                     Votre question concerne-t-elle une demande RH en cours ou
                     cloturée ?
                   </FormLabel>
@@ -222,7 +226,7 @@ const CustomForm: FC<CustomFormProps> = ({
                     form.touched.contactPreference
                   }
                 >
-                  <FormLabel>Votre souhaitez être contacté sur :</FormLabel>
+                  <FormLabel htmlFor='contactPreference'>Votre souhaitez être contacté sur :</FormLabel>
                   <Flex
                     d='flex'
                     direction={{ base: 'column', sm: 'row' }}
