@@ -93,6 +93,7 @@ const HomePage = () => {
       <Flex direction='column'>
         <Box mb={8}>
           <Text
+            data-testid='title'
             bgGradient='linear(to-l, #7928CA,#FF0080)'
             bgClip='text'
             fontSize={{ base: 'lg', md: '2xl' }}
@@ -102,6 +103,7 @@ const HomePage = () => {
             Prenez un rendez-vous téléphonique au Click et Kiosque RH
           </Text>
           <Text
+            data-testid='subtitle'
             color='gray.500'
             fontSize={{ base: 'md', md: 'lg' }}
             fontWeight='bold'
@@ -115,7 +117,7 @@ const HomePage = () => {
             </Box>
           </Center>
           <Box mt={4}>
-            <Text as='i' fontSize={{ base: 'xs', md: 'lg' }}>
+            <Text data-testid='required-fields-message' as='i' fontSize={{ base: 'xs', md: 'lg' }}>
               Tous les champs de saisie sont obligatoires pour prendre un
               rendez-vous
             </Text>
