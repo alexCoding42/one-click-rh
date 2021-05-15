@@ -1,2 +1,3 @@
 src/models
+src/serviceWorker.ts
 node_modules

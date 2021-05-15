@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { DataStore } from '@aws-amplify/datastore';
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { DataStore } from "@aws-amplify/datastore";
 import {
   AlertStatus,
   Box,
@@ -9,15 +9,15 @@ import {
   Flex,
   Text,
   useToast,
-} from '@chakra-ui/react';
-import { Appointment } from '../models';
-import { IAppointment } from '../types';
-import SkeletonCard from '../components/SkeletonCard';
+} from "@chakra-ui/react";
+import { Appointment } from "../models";
+import { IAppointment } from "../types";
+import SkeletonCard from "../components/SkeletonCard";
 import {
   DELETE_APPOINTMENT_ERROR,
   DELETE_APPOINTMENT_SUCCESS,
   MY_APPOINTMENT_ERROR_TITLE,
-} from '../constants';
+} from "../constants";
 
 const MyAppointmentsPage = () => {
   const toast = useToast();
@@ -32,7 +32,7 @@ const MyAppointmentsPage = () => {
   }, []);
 
   const getNewAppointmentButton = () => (
-    <Button colorScheme='telegram' my={2} onClick={() => history.push('/')}>
+    <Button colorScheme="telegram" my={2} onClick={() => history.push("/")}>
       Create a new appointment
     </Button>
   );
@@ -44,7 +44,7 @@ const MyAppointmentsPage = () => {
       setAppointments(appts);
       setIsLoading(false);
     } catch (error) {
-      showToast(MY_APPOINTMENT_ERROR_TITLE, '', 'error');
+      showToast(MY_APPOINTMENT_ERROR_TITLE, "", "error");
       console.error(error);
       setIsLoading(false);
     }
@@ -55,12 +55,12 @@ const MyAppointmentsPage = () => {
       const appointmentToDelete = await DataStore.query(Appointment, id);
       if (appointmentToDelete) {
         DataStore.delete(appointmentToDelete);
-        showToast(DELETE_APPOINTMENT_SUCCESS, '', 'success');
+        showToast(DELETE_APPOINTMENT_SUCCESS, "", "success");
         fetchAppointments();
         return appointmentToDelete;
       }
     } catch (error) {
-      showToast(DELETE_APPOINTMENT_ERROR, '', 'error');
+      showToast(DELETE_APPOINTMENT_ERROR, "", "error");
     }
   };
 
@@ -74,7 +74,7 @@ const MyAppointmentsPage = () => {
       description,
       status,
       duration: 5000,
-      position: 'top-right',
+      position: "top-right",
       isClosable: true,
     });
   };
@@ -90,32 +90,32 @@ const MyAppointmentsPage = () => {
   }
 
   return appointments.length ? (
-    <Flex direction='column' alignItems='center' justifyContent='center'>
+    <Flex direction="column" alignItems="center" justifyContent="center">
       {getNewAppointmentButton()}
       {appointments.map((appointment: IAppointment) => (
-        <Flex p={50} w='full' alignItems='center' justifyContent='center'>
+        <Flex p={50} w="full" alignItems="center" justifyContent="center">
           <Box
             key={appointment.id}
-            mx='auto'
+            mx="auto"
             px={8}
             py={4}
-            borderRadius='lg'
-            boxShadow='lg'
-            bg='white'
-            w='2xl'
+            borderRadius="lg"
+            boxShadow="lg"
+            bg="white"
+            w="2xl"
           >
-            <Flex justifyContent='space-between' alignItems='center'>
-              <chakra.span fontSize='sm' color='gray.600'>
+            <Flex justifyContent="space-between" alignItems="center">
+              <chakra.span fontSize="sm" color="gray.600">
                 {appointment.hour}
               </chakra.span>
               <Button
-                size='sm'
-                bg='red.600'
-                color='white'
-                fontSize='sm'
-                fontWeight='700'
-                borderRadius='md'
-                _hover={{ bg: 'red.500' }}
+                size="sm"
+                bg="red.600"
+                color="white"
+                fontSize="sm"
+                fontWeight="700"
+                borderRadius="md"
+                _hover={{ bg: "red.500" }}
                 onClick={() => handleDelete(appointment.id)}
               >
                 Delete
@@ -123,10 +123,10 @@ const MyAppointmentsPage = () => {
             </Flex>
 
             <Box mt={2}>
-              <Text href='#' fontSize='2xl' color='gray.700' fontWeight='700'>
+              <Text href="#" fontSize="2xl" color="gray.700" fontWeight="700">
                 Sujet du rendez-vous: {appointment.theme.toLowerCase()}
               </Text>
-              <chakra.p mt={2} color='gray.600'>
+              <chakra.p mt={2} color="gray.600">
                 {appointment.subTheme.toLowerCase()}
               </chakra.p>
             </Box>
@@ -136,13 +136,13 @@ const MyAppointmentsPage = () => {
     </Flex>
   ) : (
     <Flex
-      direction='column'
-      alignItems='center'
-      justifyContent='center'
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
       padding={4}
     >
       {getNewAppointmentButton()}
-      <Text fontSize='xl' fontWeight='700' textAlign='center'>
+      <Text fontSize="xl" fontWeight="700" textAlign="center">
         You don't have any appointment yet. You can create a new one.
       </Text>
     </Flex>

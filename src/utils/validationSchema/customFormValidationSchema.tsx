@@ -1,17 +1,17 @@
-import * as Yup from 'yup';
+import * as Yup from "yup";
 
-const fieldRequired: string = 'Ce champ est obligatoire.';
-const requestIdRequired: string = 'Vous devez préciser le n° de demande.';
+const fieldRequired: string = "Ce champ est obligatoire.";
+const requestIdRequired: string = "Vous devez préciser le n° de demande.";
 const otherLinePhoneNumberRequired: string =
-  'Vous devez entrer un n° de téléphone.';
+  "Vous devez entrer un n° de téléphone.";
 
 const requiredForClosedRequest = {
-  is: 'Oui',
+  is: "Oui",
   then: Yup.string().required(requestIdRequired),
 };
 
 const requiredForContactPreference = {
-  is: 'otherLine',
+  is: "otherLine",
   then: Yup.string().required(otherLinePhoneNumberRequired),
 };
 
@@ -19,10 +19,10 @@ export const customFormValidationSchema = Yup.object().shape({
   theme: Yup.string().required(fieldRequired),
   subTheme: Yup.string().required(fieldRequired),
   closedRequest: Yup.string().required(fieldRequired),
-  requestId: Yup.string().when('closedRequest', requiredForClosedRequest),
+  requestId: Yup.string().when("closedRequest", requiredForClosedRequest),
   contactPreference: Yup.string().required(fieldRequired),
   otherLinePhoneNumber: Yup.string().when(
-    'contactPreference',
+    "contactPreference",
     requiredForContactPreference
   ),
   precision: Yup.string().required(fieldRequired),
