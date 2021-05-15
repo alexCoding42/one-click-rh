@@ -46,13 +46,7 @@ const initialValues: IAppointment = {
   hour: '',
 };
 
-const CustomForm: FC<CustomFormProps> = ({
-  handleSubmit,
-  changeTheme,
-  themes,
-  subThemes,
-  isSubmitting,
-}) => {
+const CustomForm: FC<CustomFormProps> = ({ handleSubmit, changeTheme, themes, subThemes, isSubmitting }) => {
   const [closedRequest, setClosedRequest] = useState<string>('');
   const [contactPreference, setContactPreference] = useState<string>('');
   const [hour, setHour] = useState<string>('');
@@ -63,25 +57,23 @@ const CustomForm: FC<CustomFormProps> = ({
       validationSchema={customFormValidationSchema}
       onSubmit={(values, { resetForm }) => {
         handleSubmit(values);
-        resetForm()
-        setClosedRequest('')
-        setContactPreference('')
-        setHour('')
+        resetForm();
+        setClosedRequest('');
+        setContactPreference('');
+        setHour('');
       }}
     >
       {({ setFieldValue }) => (
-        <Form>
-          <SimpleGrid columns={{ base: 1, sm: 2 }} spacing='8' mb={8}>
-            <Field name='theme'>
+        <Form data-testid="custom-form">
+          <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="8" mb={8}>
+            <Field name="theme">
               {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={form.errors.theme && form.touched.theme}
-                >
-                  <FormLabel htmlFor='theme'>Thème de votre question</FormLabel>
+                <FormControl isInvalid={form.errors.theme && form.touched.theme}>
+                  <FormLabel htmlFor="theme">Thème de votre question</FormLabel>
                   <Select
                     {...field}
-                    name='theme'
-                    placeholder='---'
+                    name="theme"
+                    placeholder="---"
                     onChange={(e: any) => {
                       const { value } = e.target;
                       changeTheme(value);
@@ -99,15 +91,11 @@ const CustomForm: FC<CustomFormProps> = ({
                 </FormControl>
               )}
             </Field>
-            <Field name='subTheme'>
+            <Field name="subTheme">
               {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={form.errors.subTheme && form.touched.subTheme}
-                >
-                  <FormLabel htmlFor='subTheme'>
-                    Sous thème de votre question
-                  </FormLabel>
-                  <Select {...field} name='subTheme' placeholder='---'>
+                <FormControl isInvalid={form.errors.subTheme && form.touched.subTheme}>
+                  <FormLabel htmlFor="subTheme">Sous thème de votre question</FormLabel>
+                  <Select {...field} name="subTheme" placeholder="---">
                     {subThemes &&
                       subThemes.map((subTheme: any) => (
                         <option key={subTheme.id} value={subTheme.subTheme}>
@@ -122,29 +110,21 @@ const CustomForm: FC<CustomFormProps> = ({
           </SimpleGrid>
 
           <Box mb={8}>
-            <Field name='closedRequest'>
+            <Field name="closedRequest">
               {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={
-                    form.errors.closedRequest && form.touched.closedRequest
-                  }
-                >
-                  <FormLabel htmlFor='closedRequest'>
-                    Votre question concerne-t-elle une demande RH en cours ou
-                    cloturée ?
+                <FormControl isInvalid={form.errors.closedRequest && form.touched.closedRequest}>
+                  <FormLabel htmlFor="closedRequest">
+                    Votre question concerne-t-elle une demande RH en cours ou cloturée ?
                   </FormLabel>
                   <Flex
-                    d='flex'
+                    d="flex"
                     direction={{ base: 'column', sm: 'row' }}
                     alignItems={{ base: 'initial', sm: 'center' }}
                   >
-                    <Box
-                      width={{ base: '90%', sm: '50%' }}
-                      mb={{ base: 4, sm: 0 }}
-                    >
+                    <Box width={{ base: '90%', sm: '50%' }} mb={{ base: 4, sm: 0 }}>
                       <RadioGroup
                         {...field}
-                        name='closedRequest'
+                        name="closedRequest"
                         onChange={(request: string) => {
                           setClosedRequest(request);
                           setFieldValue('closedRequest', request);
@@ -153,55 +133,37 @@ const CustomForm: FC<CustomFormProps> = ({
                       >
                         <HStack>
                           <Radio
-                            key='no'
-                            value='Non'
+                            key="no"
+                            value="Non"
                             isChecked={'Non' === closedRequest}
-                            bg={
-                              form.errors.closedRequest &&
-                              form.touched.closedRequest
-                                ? 'red.500'
-                                : 'transparent'
-                            }
+                            bg={form.errors.closedRequest && form.touched.closedRequest ? 'red.500' : 'transparent'}
                           >
                             Non
                           </Radio>
                           <Radio
-                            key='yes'
-                            value='Oui'
+                            key="yes"
+                            value="Oui"
                             isChecked={'Oui' === closedRequest}
-                            bg={
-                              form.errors.closedRequest &&
-                              form.touched.closedRequest
-                                ? 'red.500'
-                                : 'transparent'
-                            }
+                            bg={form.errors.closedRequest && form.touched.closedRequest ? 'red.500' : 'transparent'}
                           >
                             Oui
                           </Radio>
                         </HStack>
                       </RadioGroup>
-                      <FormErrorMessage>
-                        {form.errors.closedRequest}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{form.errors.closedRequest}</FormErrorMessage>
                     </Box>
 
                     <Box width={{ base: '100%', sm: '40%' }}>
-                      <Field name='requestId'>
+                      <Field name="requestId">
                         {({ field, form }: any) => (
-                          <FormControl
-                            isInvalid={
-                              form.errors.requestId && form.touched.requestId
-                            }
-                          >
+                          <FormControl isInvalid={form.errors.requestId && form.touched.requestId}>
                             <Input
                               {...field}
-                              type='text'
-                              placeholder='Préciser le n° de la demande'
+                              type="text"
+                              placeholder="Préciser le n° de la demande"
                               isDisabled={closedRequest !== 'Oui'}
                             />
-                            <FormErrorMessage>
-                              {form.errors.requestId}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{form.errors.requestId}</FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>
@@ -209,8 +171,8 @@ const CustomForm: FC<CustomFormProps> = ({
                   </Flex>
 
                   <FormHelperText>
-                    Vous pouvez retrouver le numéro de votre demande RH depuis
-                    le portail RH, dans la rubrique mes demandes.
+                    Vous pouvez retrouver le numéro de votre demande RH depuis le portail RH, dans la rubrique mes
+                    demandes.
                   </FormHelperText>
                 </FormControl>
               )}
@@ -218,27 +180,19 @@ const CustomForm: FC<CustomFormProps> = ({
           </Box>
 
           <Box mb={8}>
-            <Field name='contactPreference'>
+            <Field name="contactPreference">
               {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={
-                    form.errors.contactPreference &&
-                    form.touched.contactPreference
-                  }
-                >
-                  <FormLabel htmlFor='contactPreference'>Votre souhaitez être contacté sur :</FormLabel>
+                <FormControl isInvalid={form.errors.contactPreference && form.touched.contactPreference}>
+                  <FormLabel htmlFor="contactPreference">Votre souhaitez être contacté sur :</FormLabel>
                   <Flex
-                    d='flex'
+                    d="flex"
                     direction={{ base: 'column', sm: 'row' }}
                     alignItems={{ base: 'initial', sm: 'center' }}
                   >
-                    <Box
-                      width={{ base: '90%', sm: '50%' }}
-                      mb={{ base: 4, sm: 0 }}
-                    >
+                    <Box width={{ base: '90%', sm: '50%' }} mb={{ base: 4, sm: 0 }}>
                       <RadioGroup
                         {...field}
-                        name='contactPreference'
+                        name="contactPreference"
                         onChange={(contact: string) => {
                           setContactPreference(contact);
                           setFieldValue('contactPreference', contact);
@@ -247,12 +201,11 @@ const CustomForm: FC<CustomFormProps> = ({
                       >
                         <HStack>
                           <Radio
-                            key='proLine'
-                            value='proLine'
+                            key="proLine"
+                            value="proLine"
                             isChecked={'proLine' === contactPreference}
                             bg={
-                              form.errors.contactPreference &&
-                              form.touched.contactPreference
+                              form.errors.contactPreference && form.touched.contactPreference
                                 ? 'red.500'
                                 : 'transparent'
                             }
@@ -260,12 +213,11 @@ const CustomForm: FC<CustomFormProps> = ({
                             Votre ligne professionnelle
                           </Radio>
                           <Radio
-                            key='otherLine'
-                            value='otherLine'
+                            key="otherLine"
+                            value="otherLine"
                             isChecked={'otherLine' === contactPreference}
                             bg={
-                              form.errors.contactPreference &&
-                              form.touched.contactPreference
+                              form.errors.contactPreference && form.touched.contactPreference
                                 ? 'red.500'
                                 : 'transparent'
                             }
@@ -274,35 +226,25 @@ const CustomForm: FC<CustomFormProps> = ({
                           </Radio>
                         </HStack>
                       </RadioGroup>
-                      <FormErrorMessage>
-                        {form.errors.contactPreference}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{form.errors.contactPreference}</FormErrorMessage>
                     </Box>
 
                     <Box width={{ base: '90%', sm: '50%' }}>
-                      <Field name='otherLinePhoneNumber'>
+                      <Field name="otherLinePhoneNumber">
                         {({ field, form }: any) => (
                           <FormControl
-                            isInvalid={
-                              form.errors.otherLinePhoneNumber &&
-                              form.touched.otherLinePhoneNumber
-                            }
+                            isInvalid={form.errors.otherLinePhoneNumber && form.touched.otherLinePhoneNumber}
                           >
                             <InputGroup>
-                              <InputLeftElement
-                                pointerEvents='none'
-                                children={<PhoneIcon color='gray.300' />}
-                              />
+                              <InputLeftElement pointerEvents="none" children={<PhoneIcon color="gray.300" />} />
                               <Input
                                 {...field}
-                                type='tel'
-                                placeholder='XX XX XX XX XX'
+                                type="tel"
+                                placeholder="XX XX XX XX XX"
                                 isDisabled={contactPreference !== 'otherLine'}
                               />
                             </InputGroup>
-                            <FormErrorMessage>
-                              {form.errors.otherLinePhoneNumber}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{form.errors.otherLinePhoneNumber}</FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>
@@ -310,8 +252,8 @@ const CustomForm: FC<CustomFormProps> = ({
                   </Flex>
 
                   <FormHelperText>
-                    Le jour du rendez-vous, vous serez contacté sur cette ligne
-                    par l'expert RH en charge de votre demande.
+                    Le jour du rendez-vous, vous serez contacté sur cette ligne par l'expert RH en charge de votre
+                    demande.
                   </FormHelperText>
                 </FormControl>
               )}
@@ -319,15 +261,11 @@ const CustomForm: FC<CustomFormProps> = ({
           </Box>
 
           <Stack mb={8}>
-            <Field name='precision'>
+            <Field name="precision">
               {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={form.errors.precision && form.touched.precision}
-                >
-                  <FormLabel htmlFor='precision'>
-                    Merci de préciser votre question :
-                  </FormLabel>
-                  <Textarea {...field} name='precision' />
+                <FormControl isInvalid={form.errors.precision && form.touched.precision}>
+                  <FormLabel htmlFor="precision">Merci de préciser votre question :</FormLabel>
+                  <Textarea {...field} name="precision" />
                   <FormErrorMessage>{form.errors.precision}</FormErrorMessage>
                 </FormControl>
               )}
@@ -335,15 +273,13 @@ const CustomForm: FC<CustomFormProps> = ({
           </Stack>
 
           <Stack mb={8}>
-            <Field name='hour'>
+            <Field name="hour">
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.hour && form.touched.hour}>
-                  <FormLabel htmlFor='hour'>
-                    Choisissez votre créneau :
-                  </FormLabel>
+                  <FormLabel htmlFor="hour">Choisissez votre créneau :</FormLabel>
                   <RadioGroup
                     {...field}
-                    name='hour'
+                    name="hour"
                     onChange={(hourValue: string) => {
                       setHour(hourValue);
                       setFieldValue('hour', hourValue);
@@ -356,11 +292,7 @@ const CustomForm: FC<CustomFormProps> = ({
                             key={index}
                             value={value}
                             isChecked={value === hour}
-                            bg={
-                              form.errors.hour && form.touched.hour
-                                ? 'red.500'
-                                : 'transparent'
-                            }
+                            bg={form.errors.hour && form.touched.hour ? 'red.500' : 'transparent'}
                           >
                             {value}
                           </Radio>
@@ -374,7 +306,7 @@ const CustomForm: FC<CustomFormProps> = ({
             </Field>
           </Stack>
 
-          <Button type='submit' colorScheme='whatsapp' isLoading={isSubmitting}>
+          <Button type="submit" colorScheme="whatsapp" isLoading={isSubmitting}>
             Prendre rendez-vous
           </Button>
         </Form>

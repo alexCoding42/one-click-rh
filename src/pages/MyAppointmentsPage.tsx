@@ -1,25 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { DataStore } from '@aws-amplify/datastore';
-import {
-  AlertStatus,
-  Box,
-  Button,
-  chakra,
-  Flex,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
+import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENT_ERROR_TITLE } from '../constants';
+import React, { FC, useEffect, useState } from 'react';
+
 import { Appointment } from '../models';
+import { DataStore } from '@aws-amplify/datastore';
 import { IAppointment } from '../types';
 import SkeletonCard from '../components/SkeletonCard';
-import {
-  DELETE_APPOINTMENT_ERROR,
-  DELETE_APPOINTMENT_SUCCESS,
-  MY_APPOINTMENT_ERROR_TITLE,
-} from '../constants';
+import { useHistory } from 'react-router-dom';
 
-const MyAppointmentsPage = () => {
+const MyAppointmentsPage: FC = () => {
   const toast = useToast();
   const history = useHistory();
 
@@ -32,7 +21,7 @@ const MyAppointmentsPage = () => {
   }, []);
 
   const getNewAppointmentButton = () => (
-    <Button colorScheme='telegram' my={2} onClick={() => history.push('/')}>
+    <Button colorScheme="telegram" my={2} onClick={() => history.push('/')}>
       Create a new appointment
     </Button>
   );
@@ -64,11 +53,7 @@ const MyAppointmentsPage = () => {
     }
   };
 
-  const showToast = (
-    title: string,
-    description: string,
-    status: AlertStatus
-  ) => {
+  const showToast = (title: string, description: string, status: AlertStatus) => {
     toast({
       title,
       description,
@@ -90,31 +75,22 @@ const MyAppointmentsPage = () => {
   }
 
   return appointments.length ? (
-    <Flex direction='column' alignItems='center' justifyContent='center'>
+    <Flex direction="column" alignItems="center" justifyContent="center">
       {getNewAppointmentButton()}
       {appointments.map((appointment: IAppointment) => (
-        <Flex p={50} w='full' alignItems='center' justifyContent='center'>
-          <Box
-            key={appointment.id}
-            mx='auto'
-            px={8}
-            py={4}
-            borderRadius='lg'
-            boxShadow='lg'
-            bg='white'
-            w='2xl'
-          >
-            <Flex justifyContent='space-between' alignItems='center'>
-              <chakra.span fontSize='sm' color='gray.600'>
+        <Flex p={50} w="full" alignItems="center" justifyContent="center">
+          <Box key={appointment.id} mx="auto" px={8} py={4} borderRadius="lg" boxShadow="lg" bg="white" w="2xl">
+            <Flex justifyContent="space-between" alignItems="center">
+              <chakra.span fontSize="sm" color="gray.600">
                 {appointment.hour}
               </chakra.span>
               <Button
-                size='sm'
-                bg='red.600'
-                color='white'
-                fontSize='sm'
-                fontWeight='700'
-                borderRadius='md'
+                size="sm"
+                bg="red.600"
+                color="white"
+                fontSize="sm"
+                fontWeight="700"
+                borderRadius="md"
                 _hover={{ bg: 'red.500' }}
                 onClick={() => handleDelete(appointment.id)}
               >
@@ -123,10 +99,10 @@ const MyAppointmentsPage = () => {
             </Flex>
 
             <Box mt={2}>
-              <Text href='#' fontSize='2xl' color='gray.700' fontWeight='700'>
+              <Text href="#" fontSize="2xl" color="gray.700" fontWeight="700">
                 Sujet du rendez-vous: {appointment.theme.toLowerCase()}
               </Text>
-              <chakra.p mt={2} color='gray.600'>
+              <chakra.p mt={2} color="gray.600">
                 {appointment.subTheme.toLowerCase()}
               </chakra.p>
             </Box>
@@ -135,14 +111,9 @@ const MyAppointmentsPage = () => {
       ))}
     </Flex>
   ) : (
-    <Flex
-      direction='column'
-      alignItems='center'
-      justifyContent='center'
-      padding={4}
-    >
+    <Flex direction="column" alignItems="center" justifyContent="center" padding={4}>
       {getNewAppointmentButton()}
-      <Text fontSize='xl' fontWeight='700' textAlign='center'>
+      <Text fontSize="xl" fontWeight="700" textAlign="center">
         You don't have any appointment yet. You can create a new one.
       </Text>
     </Flex>

@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-import { DataStore } from '@aws-amplify/datastore';
-import {
-  AlertStatus,
-  Box,
-  Center,
-  Container,
-  Flex,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
-import Lottie from 'lottie-react';
+import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
+import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
+import React, { FC, useEffect, useState } from 'react';
+
+import { Appointment } from '../models';
 import CustomForm from '../components/CustomForm';
+import { DataStore } from '@aws-amplify/datastore';
+import { IAppointment } from '../types';
+import Lottie from 'lottie-react'
 import calendarBooking from '../assets/calendarBooking.json';
 import { themesAndSubthemes } from '../data';
-import { Appointment } from '../models';
-import { IAppointment } from '../types';
-import {
-  APPOINTMENT_CREATE_ERROR,
-  APPOINTMENT_CREATE_SUCCESS,
-  APPOINTMENT_TITLE,
-} from '../constants';
+import { useHistory } from 'react-router';
 
-const HomePage = () => {
+const HomePage: FC = () => {
   const toast = useToast();
   const history = useHistory();
 
@@ -33,16 +22,12 @@ const HomePage = () => {
 
   useEffect(() => {
     if (themesAndSubthemes) {
-      const themesData = Object.entries(themesAndSubthemes).map(
-        (theme: any) => theme[0]
-      );
+      const themesData = Object.entries(themesAndSubthemes).map((theme: any) => theme[0]);
       setThemes(themesData);
     }
 
     if (theme) {
-      const subThemesData = Object.entries(themesAndSubthemes).filter(
-        (subTheme: any) => subTheme[0] === theme
-      );
+      const subThemesData = Object.entries(themesAndSubthemes).filter((subTheme: any) => subTheme[0] === theme);
 
       if (subThemesData) {
         setSubThemes(subThemesData[0][1]);
@@ -73,11 +58,7 @@ const HomePage = () => {
     }
   };
 
-  const showToast = (
-    title: string,
-    description: string,
-    status: AlertStatus
-  ) => {
+  const showToast = (title: string, description: string, status: AlertStatus) => {
     toast({
       title,
       description,
@@ -89,35 +70,36 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxW='6xl' my={4}>
-      <Flex direction='column'>
+    <Container maxW="6xl" my={4}>
+      <Flex direction="column">
         <Box mb={8}>
           <Text
-            bgGradient='linear(to-l, #7928CA,#FF0080)'
-            bgClip='text'
+            data-testid="title"
+            bgGradient="linear(to-l, #7928CA,#FF0080)"
+            bgClip="text"
             fontSize={{ base: 'lg', md: '2xl' }}
-            fontWeight='extrabold'
-            textAlign='center'
+            fontWeight="extrabold"
+            textAlign="center"
           >
             Prenez un rendez-vous téléphonique au Click et Kiosque RH
           </Text>
           <Text
-            color='gray.500'
+            data-testid="subtitle"
+            color="gray.500"
             fontSize={{ base: 'md', md: 'lg' }}
-            fontWeight='bold'
-            textAlign='center'
+            fontWeight="bold"
+            textAlign="center"
           >
             Les experts de l'administration et de la paie vous répondent
           </Text>
           <Center>
-            <Box width='800px'>
+            <Box width="800px">
               <Lottie animationData={calendarBooking} />
             </Box>
           </Center>
           <Box mt={4}>
-            <Text as='i' fontSize={{ base: 'xs', md: 'lg' }}>
-              Tous les champs de saisie sont obligatoires pour prendre un
-              rendez-vous
+            <Text data-testid="required-fields-message" as="i" fontSize={{ base: 'xs', md: 'lg' }}>
+              Tous les champs de saisie sont obligatoires pour prendre un rendez-vous
             </Text>
           </Box>
         </Box>

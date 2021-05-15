@@ -1,1 +1,5 @@
 src/models
+src/serviceWorker.ts
+src/reportWebVitals.ts
+src/test-utils.tsx
+node_modules
