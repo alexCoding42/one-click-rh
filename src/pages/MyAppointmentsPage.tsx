@@ -1,11 +1,12 @@
+import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
+import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENT_ERROR_TITLE } from '../constants';
 import React, { FC, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { DataStore } from '@aws-amplify/datastore';
-import { AlertStatus, Box, Button, chakra, Flex, Text, useToast } from '@chakra-ui/react';
+
 import { Appointment } from '../models';
+import { DataStore } from '@aws-amplify/datastore';
 import { IAppointment } from '../types';
 import SkeletonCard from '../components/SkeletonCard';
-import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENT_ERROR_TITLE } from '../constants';
+import { useHistory } from 'react-router-dom';
 
 const MyAppointmentsPage: FC = () => {
   const toast = useToast();

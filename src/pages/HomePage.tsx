@@ -1,14 +1,15 @@
-import React, { FC, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-import { DataStore } from '@aws-amplify/datastore';
+import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
 import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
-import Lottie from 'lottie-react';
+import React, { FC, useEffect, useState } from 'react';
+
+import { Appointment } from '../models';
 import CustomForm from '../components/CustomForm';
+import { DataStore } from '@aws-amplify/datastore';
+import { IAppointment } from '../types';
+import Lottie from 'lottie-react'
 import calendarBooking from '../assets/calendarBooking.json';
 import { themesAndSubthemes } from '../data';
-import { Appointment } from '../models';
-import { IAppointment } from '../types';
-import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
+import { useHistory } from 'react-router';
 
 const HomePage: FC = () => {
   const toast = useToast();
