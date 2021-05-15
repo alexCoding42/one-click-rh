@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router";
-import { DataStore } from "@aws-amplify/datastore";
-import {
-  AlertStatus,
-  Box,
-  Center,
-  Container,
-  Flex,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
-import Lottie from "lottie-react";
-import CustomForm from "../components/CustomForm";
-import calendarBooking from "../assets/calendarBooking.json";
-import { themesAndSubthemes } from "../data";
-import { Appointment } from "../models";
-import { IAppointment } from "../types";
-import {
-  APPOINTMENT_CREATE_ERROR,
-  APPOINTMENT_CREATE_SUCCESS,
-  APPOINTMENT_TITLE,
-} from "../constants";
+import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
+import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
+import React, { FC, useEffect, useState } from 'react';
 
-const HomePage = () => {
+import { Appointment } from '../models';
+import CustomForm from '../components/CustomForm';
+import { DataStore } from '@aws-amplify/datastore';
+import { IAppointment } from '../types';
+import Lottie from 'lottie-react'
+import calendarBooking from '../assets/calendarBooking.json';
+import { themesAndSubthemes } from '../data';
+import { useHistory } from 'react-router';
+
+const HomePage: FC = () => {
   const toast = useToast();
   const history = useHistory();
 
@@ -33,16 +22,12 @@ const HomePage = () => {
 
   useEffect(() => {
     if (themesAndSubthemes) {
-      const themesData = Object.entries(themesAndSubthemes).map(
-        (theme: any) => theme[0]
-      );
+      const themesData = Object.entries(themesAndSubthemes).map((theme: any) => theme[0]);
       setThemes(themesData);
     }
 
     if (theme) {
-      const subThemesData = Object.entries(themesAndSubthemes).filter(
-        (subTheme: any) => subTheme[0] === theme
-      );
+      const subThemesData = Object.entries(themesAndSubthemes).filter((subTheme: any) => subTheme[0] === theme);
 
       if (subThemesData) {
         setSubThemes(subThemesData[0][1]);
@@ -63,27 +48,23 @@ const HomePage = () => {
       const appointment = { ...values };
       const newAppointment = await DataStore.save(new Appointment(appointment));
 
-      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_SUCCESS, "success");
+      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_SUCCESS, 'success');
       setIsSubmitting(false);
-      history.push("/my-appointments");
+      history.push('/my-appointments');
       return newAppointment;
     } catch (error) {
-      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, "error");
+      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
       setIsSubmitting(false);
     }
   };
 
-  const showToast = (
-    title: string,
-    description: string,
-    status: AlertStatus
-  ) => {
+  const showToast = (title: string, description: string, status: AlertStatus) => {
     toast({
       title,
       description,
       status,
       duration: 5000,
-      position: "top-right",
+      position: 'top-right',
       isClosable: true,
     });
   };
@@ -96,7 +77,7 @@ const HomePage = () => {
             data-testid="title"
             bgGradient="linear(to-l, #7928CA,#FF0080)"
             bgClip="text"
-            fontSize={{ base: "lg", md: "2xl" }}
+            fontSize={{ base: 'lg', md: '2xl' }}
             fontWeight="extrabold"
             textAlign="center"
           >
@@ -105,7 +86,7 @@ const HomePage = () => {
           <Text
             data-testid="subtitle"
             color="gray.500"
-            fontSize={{ base: "md", md: "lg" }}
+            fontSize={{ base: 'md', md: 'lg' }}
             fontWeight="bold"
             textAlign="center"
           >
@@ -117,13 +98,8 @@ const HomePage = () => {
             </Box>
           </Center>
           <Box mt={4}>
-            <Text
-              data-testid="required-fields-message"
-              as="i"
-              fontSize={{ base: "xs", md: "lg" }}
-            >
-              Tous les champs de saisie sont obligatoires pour prendre un
-              rendez-vous
+            <Text data-testid="required-fields-message" as="i" fontSize={{ base: 'xs', md: 'lg' }}>
+              Tous les champs de saisie sont obligatoires pour prendre un rendez-vous
             </Text>
           </Box>
         </Box>
