@@ -7,5 +7,5 @@ export interface IAppointment {
   contactPreference: string;
   otherLinePhoneNumber?: string;
   precision: string;
-  hour: string;
+  date: string;
 }

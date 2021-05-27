@@ -3,13 +3,13 @@ import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chak
 import React, { FC, useEffect, useState } from 'react';
 
 import { Appointment } from '../models';
-import CustomForm from '../components/CustomForm';
 import { DataStore } from '@aws-amplify/datastore';
 import { IAppointment } from '../types';
-import Lottie from 'lottie-react'
+import Lottie from 'lottie-react';
 import calendarBooking from '../assets/calendarBooking.json';
 import { themesAndSubthemes } from '../data';
 import { useHistory } from 'react-router';
+import CreateAppointment from '../components/CreateAppointment';
 
 const HomePage: FC = () => {
   const toast = useToast();
@@ -103,7 +103,7 @@ const HomePage: FC = () => {
             </Text>
           </Box>
         </Box>
-        <CustomForm
+        <CreateAppointment
           handleSubmit={handleSubmit}
           changeTheme={changeTheme}
           themes={themes}
