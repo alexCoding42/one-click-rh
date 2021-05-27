@@ -14,7 +14,7 @@ const requiredForContactPreference = {
   then: Yup.string().required(otherLinePhoneNumberRequired),
 };
 
-export const customFormValidationSchema = Yup.object().shape({
+export const createAppointmentValidationSchema = Yup.object().shape({
   theme: Yup.string().required(fieldRequired),
   subTheme: Yup.string().required(fieldRequired),
   closedRequest: Yup.string().required(fieldRequired),
@@ -22,5 +22,5 @@ export const customFormValidationSchema = Yup.object().shape({
   contactPreference: Yup.string().required(fieldRequired),
   otherLinePhoneNumber: Yup.string().when('contactPreference', requiredForContactPreference),
   precision: Yup.string().required(fieldRequired),
-  hour: Yup.string().required(fieldRequired),
+  date: Yup.string().required(fieldRequired).nullable(),
 });

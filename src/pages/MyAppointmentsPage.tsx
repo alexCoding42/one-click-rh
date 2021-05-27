@@ -1,12 +1,15 @@
-import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
-import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENT_ERROR_TITLE } from '../constants';
 import React, { FC, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { format} from 'date-fns';
+
+import { DataStore } from '@aws-amplify/datastore';
+import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
+
+import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENT_ERROR_TITLE } from '../constants';
 
 import { Appointment } from '../models';
-import { DataStore } from '@aws-amplify/datastore';
 import { IAppointment } from '../types';
 import SkeletonCard from '../components/SkeletonCard';
-import { useHistory } from 'react-router-dom';
 
 const MyAppointmentsPage: FC = () => {
   const toast = useToast();
@@ -78,11 +81,11 @@ const MyAppointmentsPage: FC = () => {
     <Flex direction="column" alignItems="center" justifyContent="center">
       {getNewAppointmentButton()}
       {appointments.map((appointment: IAppointment) => (
-        <Flex p={50} w="full" alignItems="center" justifyContent="center">
+        <Flex key={appointment.id} p={50} w="full" alignItems="center" justifyContent="center">
           <Box key={appointment.id} mx="auto" px={8} py={4} borderRadius="lg" boxShadow="lg" bg="white" w="2xl">
             <Flex justifyContent="space-between" alignItems="center">
               <chakra.span fontSize="sm" color="gray.600">
-                {appointment.hour}
+                {format(new Date(appointment.date), "PPPPpp")}
               </chakra.span>
               <Button
                 size="sm"
@@ -99,12 +102,15 @@ const MyAppointmentsPage: FC = () => {
             </Flex>
 
             <Box mt={2}>
-              <Text href="#" fontSize="2xl" color="gray.700" fontWeight="700">
-                Sujet du rendez-vous: {appointment.theme.toLowerCase()}
+              <Text fontSize="2xl" color="gray.700" fontWeight="700" mb={2}>
+                Thème : {appointment.theme.toLowerCase()}
               </Text>
-              <chakra.p mt={2} color="gray.600">
-                {appointment.subTheme.toLowerCase()}
-              </chakra.p>
+              <Text fontSize="l" color="gray.700" fontWeight="500" mb={6}>
+                Sous-thème : {appointment.subTheme.toLowerCase()}
+              </Text>
+              <Text fontSize="m" color="gray.700" as="i">
+                Question : {appointment.precision}
+              </Text>
             </Box>
           </Box>
         </Flex>

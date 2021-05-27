@@ -1,5 +1,8 @@
-import React, { FC, useState } from 'react';
+import React, { FC, forwardRef, useState } from 'react';
 import { Field, Form, Formik } from 'formik';
+import { format, formatISO, isWeekend, setHours, setMinutes } from 'date-fns';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   Box,
   Button,
@@ -22,11 +25,11 @@ import {
 
 import { AiOutlinePhone as PhoneIcon } from 'react-icons/ai';
 
-import { hourOptions } from '../../src/data';
-import { customFormValidationSchema } from '../utils/validationSchema/customFormValidationSchema';
+import './CreateAppointment.css';
+import { createAppointmentValidationSchema } from '../utils/validationSchema/createAppointmentValidationSchema';
 import { IAppointment } from '../types';
 
-type CustomFormProps = {
+type CreateAppointmentProps = {
   handleSubmit: (values: IAppointment) => any;
   changeTheme: (theme: string) => string;
   themes: string[];
@@ -43,24 +46,47 @@ const initialValues: IAppointment = {
   contactPreference: '',
   otherLinePhoneNumber: '',
   precision: '',
-  hour: '',
+  date: '',
 };
 
-const CustomForm: FC<CustomFormProps> = ({ handleSubmit, changeTheme, themes, subThemes, isSubmitting }) => {
+const CreateAppointment: FC<CreateAppointmentProps> = ({
+  handleSubmit,
+  changeTheme,
+  themes,
+  subThemes,
+  isSubmitting,
+}) => {
   const [closedRequest, setClosedRequest] = useState<string>('');
   const [contactPreference, setContactPreference] = useState<string>('');
-  const [hour, setHour] = useState<string>('');
+  const [date, setDate] = useState<Date | null>(null);
+
+  const CustomCalendarInput = forwardRef<any>(({ value, onClick, onChange }: any, ref) => (
+    <Input
+      type="text"
+      variant="outline"
+      placeholder="Choisir un jour de la semaine, 9:00-15:00"
+      onClick={onClick}
+      onChange={onChange}
+      ref={ref}
+      value={value ? format(new Date(value), 'MMMM d, yyyy h:mm aa') : ''}
+    />
+  ));
+
+  const filterWeekend = (date: Date) => {
+    const day = !isWeekend(date);
+    return day;
+  };
 
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={customFormValidationSchema}
+      validationSchema={createAppointmentValidationSchema}
       onSubmit={(values, { resetForm }) => {
         handleSubmit(values);
         resetForm();
         setClosedRequest('');
         setContactPreference('');
-        setHour('');
+        setDate(null);
       }}
     >
       {({ setFieldValue }) => (
@@ -272,39 +298,33 @@ const CustomForm: FC<CustomFormProps> = ({ handleSubmit, changeTheme, themes, su
             </Field>
           </Stack>
 
-          <Stack mb={8}>
-            <Field name="hour">
+          <Box mb={8}>
+            <Field name="date">
               {({ field, form }: any) => (
-                <FormControl isInvalid={form.errors.hour && form.touched.hour}>
-                  <FormLabel htmlFor="hour">Choisissez votre créneau :</FormLabel>
-                  <RadioGroup
+                <FormControl isInvalid={form.errors.date && form.touched.date}>
+                  <FormLabel htmlFor="date">Choisissez votre créneau:</FormLabel>
+                  <DatePicker
                     {...field}
-                    name="hour"
-                    onChange={(hourValue: string) => {
-                      setHour(hourValue);
-                      setFieldValue('hour', hourValue);
+                    name="date"
+                    isClearable
+                    showTimeSelect
+                    timeIntervals={30}
+                    selected={date}
+                    filterDate={(d) => filterWeekend(d)}
+                    minDate={new Date()}
+                    minTime={setHours(setMinutes(new Date(), 0), 9)}
+                    maxTime={setHours(setMinutes(new Date(), 0), 15)}
+                    onChange={(value: Date | null) => {
+                      setDate(value);
+                      setFieldValue('date', value ? formatISO(value) : null);
                     }}
-                  >
-                    <SimpleGrid columns={{ base: 2, sm: 1 }}>
-                      {hourOptions.map((value, index) => {
-                        return (
-                          <Radio
-                            key={index}
-                            value={value}
-                            isChecked={value === hour}
-                            bg={form.errors.hour && form.touched.hour ? 'red.500' : 'transparent'}
-                          >
-                            {value}
-                          </Radio>
-                        );
-                      })}
-                    </SimpleGrid>
-                  </RadioGroup>
-                  <FormErrorMessage>{form.errors.hour}</FormErrorMessage>
+                    customInput={<CustomCalendarInput />}
+                  />
+                  <FormErrorMessage>{form.errors.date}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-          </Stack>
+          </Box>
 
           <Button type="submit" colorScheme="whatsapp" isLoading={isSubmitting}>
             Prendre rendez-vous
@@ -315,4 +335,4 @@ const CustomForm: FC<CustomFormProps> = ({ handleSubmit, changeTheme, themes, su
   );
 };
 
-export default CustomForm;
+export default CreateAppointment;
