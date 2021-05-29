@@ -1,13 +1,12 @@
 import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
+import { DataStore } from '@aws-amplify/datastore';
 import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
 import React, { FC, useEffect, useState } from 'react';
 
-import { Appointment } from '../models';
-import { DataStore } from '@aws-amplify/datastore';
+import { Appointment, SubTheme, Theme } from '../models';
 import { IAppointment } from '../types';
 import Lottie from 'lottie-react';
 import calendarBooking from '../assets/calendarBooking.json';
-import { themesAndSubthemes } from '../data';
 import { useHistory } from 'react-router';
 import CreateAppointment from '../components/CreateAppointment';
 
@@ -15,31 +14,34 @@ const HomePage: FC = () => {
   const toast = useToast();
   const history = useHistory();
 
-  const [themes, setThemes] = useState<string[]>([]);
-  const [subThemes, setSubThemes] = useState<any[]>([]);
-  const [theme, setTheme] = useState<string | null>(null);
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [allSubThemesOfTheme, setAllSubThemesOfTheme] = useState<SubTheme[]>([]);
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
-    if (themesAndSubthemes) {
-      const themesData = Object.entries(themesAndSubthemes).map((theme: any) => theme[0]);
-      setThemes(themesData);
-    }
+    const fetchThemes = async () => {
+      const data = await DataStore.query(Theme);
+      setThemes(data);
+    };
+    fetchThemes();
+  }, []);
 
-    if (theme) {
-      const subThemesData = Object.entries(themesAndSubthemes).filter((subTheme: any) => subTheme[0] === theme);
-
-      if (subThemesData) {
-        setSubThemes(subThemesData[0][1]);
+  useEffect(() => {
+    const fetchSubThemes = async () => {
+      const subThemes = await DataStore.query(SubTheme);
+      if (selectedTheme) {
+        const foundTheme = themes.find(t => t.name === selectedTheme);
+        const filteredSubThemes = subThemes.filter((sub) => sub.themeID === foundTheme?.id);
+        setAllSubThemesOfTheme(filteredSubThemes);
       }
-    } else {
-      setSubThemes([]);
-    }
-  }, [theme]);
+    };
+    fetchSubThemes();
+  }, [selectedTheme]);
 
-  const changeTheme = (theme: string) => {
-    setTheme(theme.toUpperCase());
-    return theme;
+  const changeTheme = (selectedValue: string) => {
+    setSelectedTheme(selectedValue);
+    return selectedValue;
   };
 
   const handleSubmit = async (values: IAppointment) => {
@@ -107,7 +109,7 @@ const HomePage: FC = () => {
           handleSubmit={handleSubmit}
           changeTheme={changeTheme}
           themes={themes}
-          subThemes={subThemes}
+          subThemes={allSubThemesOfTheme}
           isSubmitting={isSubmitting}
         />
       </Flex>
