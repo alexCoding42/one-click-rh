@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { format} from 'date-fns';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 import { DataStore } from '@aws-amplify/datastore';
 import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
@@ -25,7 +26,7 @@ const MyAppointmentsPage: FC = () => {
 
   const getNewAppointmentButton = () => (
     <Button colorScheme="telegram" my={2} onClick={() => history.push('/')}>
-      Create a new appointment
+      Prendre un nouveau rendez-vous
     </Button>
   );
 
@@ -85,7 +86,7 @@ const MyAppointmentsPage: FC = () => {
           <Box key={appointment.id} mx="auto" px={8} py={4} borderRadius="lg" boxShadow="lg" bg="white" w="2xl">
             <Flex justifyContent="space-between" alignItems="center">
               <chakra.span fontSize="sm" color="gray.600">
-                {format(new Date(appointment.date), "PPPPpp")}
+                {format(new Date(appointment.date), 'PPPPp', { locale: fr })}
               </chakra.span>
               <Button
                 size="sm"
@@ -97,7 +98,7 @@ const MyAppointmentsPage: FC = () => {
                 _hover={{ bg: 'red.500' }}
                 onClick={() => handleDelete(appointment.id)}
               >
-                Delete
+                Supprimer
               </Button>
             </Flex>
 
@@ -120,7 +121,7 @@ const MyAppointmentsPage: FC = () => {
     <Flex direction="column" alignItems="center" justifyContent="center" padding={4}>
       {getNewAppointmentButton()}
       <Text fontSize="xl" fontWeight="700" textAlign="center">
-        You don't have any appointment yet. You can create a new one.
+        Vous n'avez pas de rendez-vous pour le moment.
       </Text>
     </Flex>
   );
