@@ -1,4 +1,5 @@
 import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
+import { Predicates, SortDirection } from 'aws-amplify';
 import { DataStore } from '@aws-amplify/datastore';
 import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
 import React, { FC, useEffect, useState } from 'react';
@@ -21,7 +22,9 @@ const HomePage: FC = () => {
 
   useEffect(() => {
     const fetchThemes = async () => {
-      const data = await DataStore.query(Theme);
+      const data = await DataStore.query(Theme, Predicates.ALL, {
+        sort: (s) => s.name(SortDirection.ASCENDING),
+      });
       setThemes(data);
     };
     fetchThemes();
@@ -31,7 +34,7 @@ const HomePage: FC = () => {
     const fetchSubThemes = async () => {
       const subThemes = await DataStore.query(SubTheme);
       if (selectedTheme) {
-        const foundTheme = themes.find(t => t.name === selectedTheme);
+        const foundTheme = themes.find((t) => t.name === selectedTheme);
         const filteredSubThemes = subThemes.filter((sub) => sub.themeID === foundTheme?.id);
         setAllSubThemesOfTheme(filteredSubThemes);
       }
