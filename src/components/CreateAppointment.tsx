@@ -28,12 +28,13 @@ import { AiOutlinePhone as PhoneIcon } from 'react-icons/ai';
 import './CreateAppointment.css';
 import { createAppointmentValidationSchema } from '../utils/validationSchema/createAppointmentValidationSchema';
 import { IAppointment } from '../types';
+import { SubTheme, Theme } from '../models';
 
 type CreateAppointmentProps = {
-  handleSubmit: (values: IAppointment) => any;
-  changeTheme: (theme: string) => string;
-  themes: string[];
-  subThemes: any[];
+  handleSubmit: (values: IAppointment) => void;
+  changeTheme: (theme: string) => void;
+  themes: Theme[];
+  subThemes: SubTheme[];
   isSubmitting: boolean;
 };
 
@@ -107,9 +108,9 @@ const CreateAppointment: FC<CreateAppointmentProps> = ({
                     }}
                   >
                     {themes &&
-                      themes.map((theme: any) => (
-                        <option key={theme} value={theme}>
-                          {theme.toLowerCase()}
+                      themes.map((theme: Theme) => (
+                        <option key={theme.id} value={theme.name}>
+                          {theme.name}
                         </option>
                       ))}
                   </Select>
@@ -123,9 +124,9 @@ const CreateAppointment: FC<CreateAppointmentProps> = ({
                   <FormLabel htmlFor="subTheme">Sous thème de votre question</FormLabel>
                   <Select {...field} name="subTheme" placeholder="---">
                     {subThemes &&
-                      subThemes.map((subTheme: any) => (
-                        <option key={subTheme.id} value={subTheme.subTheme}>
-                          {subTheme.subTheme.toLowerCase()}
+                      subThemes.map((subTheme: SubTheme) => (
+                        <option key={subTheme.id} value={subTheme.name}>
+                          {subTheme.name}
                         </option>
                       ))}
                   </Select>
