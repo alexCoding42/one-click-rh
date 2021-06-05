@@ -1,21 +1,21 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { API, Auth } from 'aws-amplify';
 
-import { DataStore } from '@aws-amplify/datastore';
+import { withAuthenticator } from '@aws-amplify/ui-react';
 import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
 
-import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENT_ERROR_TITLE } from '../constants';
+import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENTS_ERROR } from '../constants';
+import { appointmentsByUsername } from '../graphql/queries';
+import { deleteAppointment } from '../graphql/mutations';
 
-import { Appointment } from '../models';
 import { IAppointment } from '../types';
 import SkeletonCard from '../components/SkeletonCard';
+import NewAppointmentButton from '../components/NewAppointmentButton';
 
 const MyAppointmentsPage: FC = () => {
   const toast = useToast();
-  const history = useHistory();
-
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -24,20 +24,15 @@ const MyAppointmentsPage: FC = () => {
     // eslint-disable-next-line
   }, []);
 
-  const getNewAppointmentButton = () => (
-    <Button colorScheme="telegram" my={2} onClick={() => history.push('/')}>
-      Prendre un nouveau rendez-vous
-    </Button>
-  );
-
   const fetchAppointments = async () => {
     try {
       setIsLoading(true);
-      const appts = await DataStore.query(Appointment);
-      setAppointments(appts);
+      const { username } = await Auth.currentAuthenticatedUser();
+      const appointmentsData: any = await API.graphql({ query: appointmentsByUsername, variables: { username } });
+      setAppointments(appointmentsData.data.appointmentsByUsername.items);
       setIsLoading(false);
     } catch (error) {
-      showToast(MY_APPOINTMENT_ERROR_TITLE, '', 'error');
+      showToast(MY_APPOINTMENTS_ERROR, '', 'error');
       console.error(error);
       setIsLoading(false);
     }
@@ -45,15 +40,17 @@ const MyAppointmentsPage: FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const appointmentToDelete = await DataStore.query(Appointment, id);
-      if (appointmentToDelete) {
-        DataStore.delete(appointmentToDelete);
-        showToast(DELETE_APPOINTMENT_SUCCESS, '', 'success');
-        fetchAppointments();
-        return appointmentToDelete;
-      }
+      await API.graphql({
+        query: deleteAppointment,
+        variables: { input: { id } },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        authMode: 'AMAZON_COGNITO_USER_POOLS',
+      });
+      showToast('', DELETE_APPOINTMENT_SUCCESS, 'success');
+      fetchAppointments();
     } catch (error) {
-      showToast(DELETE_APPOINTMENT_ERROR, '', 'error');
+      showToast('', DELETE_APPOINTMENT_ERROR, 'error');
     }
   };
 
@@ -80,7 +77,7 @@ const MyAppointmentsPage: FC = () => {
 
   return appointments.length ? (
     <Flex direction="column" alignItems="center" justifyContent="center">
-      {getNewAppointmentButton()}
+      <NewAppointmentButton />
       {appointments.map((appointment: IAppointment) => (
         <Flex key={appointment.id} p={50} w="full" alignItems="center" justifyContent="center">
           <Box key={appointment.id} mx="auto" px={8} py={4} borderRadius="lg" boxShadow="lg" bg="white" w="2xl">
@@ -102,6 +99,8 @@ const MyAppointmentsPage: FC = () => {
               </Button>
             </Flex>
 
+            <Text fontSize="sm" as="i">{appointment.username}</Text>
+
             <Box mt={2}>
               <Text fontSize="2xl" color="gray.700" fontWeight="700" mb={2}>
                 Thème : {appointment.theme.toLowerCase()}
@@ -110,7 +109,7 @@ const MyAppointmentsPage: FC = () => {
                 Sous-thème : {appointment.subTheme.toLowerCase()}
               </Text>
               <Text fontSize="m" color="gray.700" as="i">
-                Question : {appointment.precision}
+                Question : {appointment.description}
               </Text>
             </Box>
           </Box>
@@ -119,7 +118,7 @@ const MyAppointmentsPage: FC = () => {
     </Flex>
   ) : (
     <Flex direction="column" alignItems="center" justifyContent="center" padding={4}>
-      {getNewAppointmentButton()}
+      <NewAppointmentButton />
       <Text fontSize="xl" fontWeight="700" textAlign="center">
         Vous n'avez pas de rendez-vous pour le moment.
       </Text>
@@ -127,4 +126,4 @@ const MyAppointmentsPage: FC = () => {
   );
 };
 
-export default MyAppointmentsPage;
+export default withAuthenticator(MyAppointmentsPage);

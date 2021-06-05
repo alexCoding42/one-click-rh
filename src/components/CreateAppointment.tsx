@@ -28,7 +28,7 @@ import { AiOutlinePhone as PhoneIcon } from 'react-icons/ai';
 import './CreateAppointment.css';
 import { createAppointmentValidationSchema } from '../utils/validationSchema/createAppointmentValidationSchema';
 import { IAppointment } from '../types';
-import { SubTheme, Theme } from '../models';
+import { SubTheme, Theme } from '../API';
 
 type CreateAppointmentProps = {
   handleSubmit: (values: IAppointment) => void;
@@ -43,10 +43,10 @@ const initialValues: IAppointment = {
   theme: '',
   subTheme: '',
   closedRequest: '',
-  requestId: '',
+  closedRequestId: '',
   contactPreference: '',
   otherLinePhoneNumber: '',
-  precision: '',
+  description: '',
   date: '',
 };
 
@@ -155,7 +155,7 @@ const CreateAppointment: FC<CreateAppointmentProps> = ({
                         onChange={(request: string) => {
                           setClosedRequest(request);
                           setFieldValue('closedRequest', request);
-                          setFieldValue('requestId', '');
+                          setFieldValue('closedRequestId', '');
                         }}
                       >
                         <HStack>
@@ -181,16 +181,16 @@ const CreateAppointment: FC<CreateAppointmentProps> = ({
                     </Box>
 
                     <Box width={{ base: '100%', sm: '40%' }}>
-                      <Field name="requestId">
+                      <Field name="closedRequestId">
                         {({ field, form }: any) => (
-                          <FormControl isInvalid={form.errors.requestId && form.touched.requestId}>
+                          <FormControl isInvalid={form.errors.closedRequestId && form.touched.closedRequestId}>
                             <Input
                               {...field}
                               type="text"
                               placeholder="Préciser le n° de la demande"
                               isDisabled={closedRequest !== 'Oui'}
                             />
-                            <FormErrorMessage>{form.errors.requestId}</FormErrorMessage>
+                            <FormErrorMessage>{form.errors.closedRequestId}</FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>
@@ -288,12 +288,12 @@ const CreateAppointment: FC<CreateAppointmentProps> = ({
           </Box>
 
           <Stack mb={8}>
-            <Field name="precision">
+            <Field name="description">
               {({ field, form }: any) => (
-                <FormControl isInvalid={form.errors.precision && form.touched.precision}>
-                  <FormLabel htmlFor="precision">Merci de préciser votre question :</FormLabel>
-                  <Textarea {...field} name="precision" />
-                  <FormErrorMessage>{form.errors.precision}</FormErrorMessage>
+                <FormControl isInvalid={form.errors.description && form.touched.description}>
+                  <FormLabel htmlFor="description">Merci de préciser votre question :</FormLabel>
+                  <Textarea {...field} name="description" />
+                  <FormErrorMessage>{form.errors.description}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>

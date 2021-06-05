@@ -18,9 +18,9 @@ export const createAppointmentValidationSchema = Yup.object().shape({
   theme: Yup.string().required(fieldRequired),
   subTheme: Yup.string().required(fieldRequired),
   closedRequest: Yup.string().required(fieldRequired),
-  requestId: Yup.string().when('closedRequest', requiredForClosedRequest),
+  closedRequestId: Yup.string().when('closedRequest', requiredForClosedRequest),
   contactPreference: Yup.string().required(fieldRequired),
   otherLinePhoneNumber: Yup.string().when('contactPreference', requiredForContactPreference),
-  precision: Yup.string().required(fieldRequired),
+  description: Yup.string().required(fieldRequired),
   date: Yup.string().required(fieldRequired).nullable(),
 });
