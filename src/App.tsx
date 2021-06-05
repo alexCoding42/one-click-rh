@@ -1,13 +1,12 @@
-import * as React from 'react';
-
-import { ChakraProvider, theme } from '@chakra-ui/react';
+import React, { FC } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react';
 
-import { FC } from 'react';
 import HomePage from './pages/HomePage';
 import MyAppointmentsPage from './pages/MyAppointmentsPage';
-import NavBar from './components/NavBar';
 import ProfilePage from './pages/ProfilePage';
+import NavBar from './components/NavBar';
+import { theme } from './styles/theme';
 
 export const App: FC = () => (
   <ChakraProvider theme={theme}>
