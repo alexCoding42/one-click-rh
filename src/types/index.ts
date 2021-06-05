@@ -3,9 +3,10 @@ export interface IAppointment {
   theme: string;
   subTheme: string;
   closedRequest: string;
-  requestId?: string;
+  closedRequestId?: string;
   contactPreference: string;
   otherLinePhoneNumber?: string;
-  precision: string;
+  description: string;
   date: string;
+  username?: string;
 }

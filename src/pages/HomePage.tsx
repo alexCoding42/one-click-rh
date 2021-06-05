@@ -1,15 +1,22 @@
-import { APPOINTMENT_CREATE_ERROR, APPOINTMENT_CREATE_SUCCESS, APPOINTMENT_TITLE } from '../constants';
-import { Predicates, SortDirection } from 'aws-amplify';
-import { DataStore } from '@aws-amplify/datastore';
-import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
 import React, { FC, useEffect, useState } from 'react';
-
-import { Appointment, SubTheme, Theme } from '../models';
-import { IAppointment } from '../types';
-import Lottie from 'lottie-react';
-import calendarBooking from '../assets/calendarBooking.json';
 import { useHistory } from 'react-router';
+import { API } from 'aws-amplify';
+import { v4 as uuid } from 'uuid';
+import Lottie from 'lottie-react';
+import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
+import { withAuthenticator } from '@aws-amplify/ui-react';
+
+import {
+  APPOINTMENT_CREATE_ERROR,
+  APPOINTMENT_CREATE_SUCCESS,
+  FETCH_DB_ERROR,
+} from '../constants';
+import { IAppointment } from '../types';
+import calendarBooking from '../assets/calendarBooking.json';
 import CreateAppointment from '../components/CreateAppointment';
+import { listSubThemes, listThemes } from '../graphql/queries';
+import { createAppointment } from '../graphql/mutations';
+import { SubTheme, Theme } from '../API';
 
 const HomePage: FC = () => {
   const toast = useToast();
@@ -22,21 +29,28 @@ const HomePage: FC = () => {
 
   useEffect(() => {
     const fetchThemes = async () => {
-      const data = await DataStore.query(Theme, Predicates.ALL, {
-        sort: (s) => s.name(SortDirection.ASCENDING),
-      });
-      setThemes(data);
+      try {
+        const allThemes: any = await API.graphql({ query: listThemes });
+        setThemes(allThemes.data.listThemes.items);
+      } catch (error) {
+        showToast('', FETCH_DB_ERROR, 'error');
+      }
     };
     fetchThemes();
   }, []);
 
   useEffect(() => {
     const fetchSubThemes = async () => {
-      const subThemes = await DataStore.query(SubTheme);
-      if (selectedTheme) {
-        const foundTheme = themes.find((t) => t.name === selectedTheme);
-        const filteredSubThemes = subThemes.filter((sub) => sub.themeID === foundTheme?.id);
-        setAllSubThemesOfTheme(filteredSubThemes);
+      try {
+        const subThemesData: any = await API.graphql({ query: listSubThemes });
+        const subThemes = subThemesData.data.listSubThemes.items;
+        if (selectedTheme) {
+          const foundTheme = themes && themes.find((t: Theme) => t.name === selectedTheme);
+          const filteredSubThemes = subThemes.filter((sub: SubTheme) => sub.themeID === foundTheme?.id);
+          setAllSubThemesOfTheme(filteredSubThemes);
+        }
+      } catch (error) {
+        showToast('', FETCH_DB_ERROR, 'error');
       }
     };
     fetchSubThemes();
@@ -50,15 +64,21 @@ const HomePage: FC = () => {
   const handleSubmit = async (values: IAppointment) => {
     try {
       setIsSubmitting(true);
-      const appointment = { ...values };
-      const newAppointment = await DataStore.save(new Appointment(appointment));
+      const id = uuid();
+      values.id = id;
 
-      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_SUCCESS, 'success');
+      await API.graphql({
+        query: createAppointment,
+        variables: { input: values },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        authMode: 'AMAZON_COGNITO_USER_POOLS',
+      });
+      showToast('', APPOINTMENT_CREATE_SUCCESS, 'success');
       setIsSubmitting(false);
       history.push('/my-appointments');
-      return newAppointment;
     } catch (error) {
-      showToast(APPOINTMENT_TITLE, APPOINTMENT_CREATE_ERROR, 'error');
+      showToast('', APPOINTMENT_CREATE_ERROR, 'error');
       setIsSubmitting(false);
     }
   };
@@ -120,4 +140,4 @@ const HomePage: FC = () => {
   );
 };
 
-export default HomePage;
+export default withAuthenticator(HomePage);

@@ -1,0 +1,29 @@
+type SubTheme @model @key(name: "byTheme", fields: ["themeID"]) {
+  id: ID!
+  name: String!
+
+  themeID: ID!
+}
+
+type Theme @model {
+  id: ID!
+  name: String!
+
+  subThemes: [SubTheme] @connection(keyName: "byTheme", fields: ["id"])
+}
+
+type Appointment
+  @model
+  @key(name: "appointmentsByUsername", fields: ["username"], queryField: "appointmentsByUsername")
+  @auth(rules: [{ allow: owner, ownerField: "username" }, { allow: public, operations: [read] }]) {
+  id: ID!
+  theme: String!
+  subTheme: String!
+  closedRequest: String!
+  closedRequestId: String
+  contactPreference: String!
+  otherLinePhoneNumber: String
+  description: String!
+  date: String!
+  username: String
+}
