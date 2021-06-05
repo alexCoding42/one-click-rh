@@ -19,6 +19,7 @@ import { HiMenu as MenuIcon, HiOutlineX as CloseIcon } from 'react-icons/hi';
 const Links = [
   { linkName: 'Accueil', to: '/' },
   { linkName: 'Mes rendez-vous', to: 'my-appointments' },
+  { linkName: 'Profil', to: 'profile' },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (

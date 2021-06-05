@@ -1,15 +1,20 @@
 {
-  "staging": {
+  "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-oneclickrhbackend-staging-174328-authRole",
-      "UnauthRoleArn": "arn:aws:iam::576802140734:role/amplify-oneclickrhbackend-staging-174328-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::576802140734:role/amplify-oneclickrhbackend-staging-174328-authRole",
+      "AuthRoleName": "amplify-oneclickrh-dev-14353-authRole",
+      "UnauthRoleArn": "arn:aws:iam::576802140734:role/amplify-oneclickrh-dev-14353-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::576802140734:role/amplify-oneclickrh-dev-14353-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-oneclickrhbackend-staging-174328-deployment",
-      "UnauthRoleName": "amplify-oneclickrhbackend-staging-174328-unauthRole",
-      "StackName": "amplify-oneclickrhbackend-staging-174328",
-      "StackId": "arn:aws:cloudformation:us-east-1:576802140734:stack/amplify-oneclickrhbackend-staging-174328/e189b300-be49-11eb-a0eb-0e4c8b1e1e5f",
-      "AmplifyAppId": "d1a1tpkusdxd8t"
+      "DeploymentBucketName": "amplify-oneclickrh-dev-14353-deployment",
+      "UnauthRoleName": "amplify-oneclickrh-dev-14353-unauthRole",
+      "StackName": "amplify-oneclickrh-dev-14353",
+      "StackId": "arn:aws:cloudformation:us-east-1:576802140734:stack/amplify-oneclickrh-dev-14353/ba2b7450-c58e-11eb-9b3e-0e64f38da7a5",
+      "AmplifyAppId": "d2w7ggjo4xqto6"
+    },
+    "categories": {
+      "auth": {
+        "oneclickrh875a3fd0": {}
+      }
     }
   }
 }
