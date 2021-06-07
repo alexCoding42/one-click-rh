@@ -5,7 +5,7 @@ import Amplify from 'aws-amplify';
 import { ColorModeScript } from '@chakra-ui/react';
 
 import awsExports from './aws-exports';
-import { App } from './App';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 

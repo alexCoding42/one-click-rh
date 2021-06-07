@@ -4,7 +4,7 @@ import { fr } from 'date-fns/locale';
 import { API, Auth } from 'aws-amplify';
 
 import { withAuthenticator } from '@aws-amplify/ui-react';
-import { AlertStatus, Box, Button, Flex, Text, chakra, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, chakra } from '@chakra-ui/react';
 
 import { DELETE_APPOINTMENT_ERROR, DELETE_APPOINTMENT_SUCCESS, MY_APPOINTMENTS_ERROR } from '../constants';
 import { appointmentsByUsername } from '../graphql/queries';
@@ -13,9 +13,9 @@ import { deleteAppointment } from '../graphql/mutations';
 import { IAppointment } from '../types';
 import SkeletonCard from '../components/SkeletonCard';
 import NewAppointmentButton from '../components/NewAppointmentButton';
+import useCustomToast from '../hooks/useCustomToast';
 
 const MyAppointmentsPage: FC = () => {
-  const toast = useToast();
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -32,7 +32,7 @@ const MyAppointmentsPage: FC = () => {
       setAppointments(appointmentsData.data.appointmentsByUsername.items);
       setIsLoading(false);
     } catch (error) {
-      showToast(MY_APPOINTMENTS_ERROR, '', 'error');
+      useCustomToast('', MY_APPOINTMENTS_ERROR, 'error');
       console.error(error);
       setIsLoading(false);
     }
@@ -47,22 +47,11 @@ const MyAppointmentsPage: FC = () => {
         // @ts-ignore
         authMode: 'AMAZON_COGNITO_USER_POOLS',
       });
-      showToast('', DELETE_APPOINTMENT_SUCCESS, 'success');
+      useCustomToast('', DELETE_APPOINTMENT_SUCCESS, 'success');
       fetchAppointments();
     } catch (error) {
-      showToast('', DELETE_APPOINTMENT_ERROR, 'error');
+      useCustomToast('', DELETE_APPOINTMENT_ERROR, 'error');
     }
-  };
-
-  const showToast = (title: string, description: string, status: AlertStatus) => {
-    toast({
-      title,
-      description,
-      status,
-      duration: 5000,
-      position: 'top-right',
-      isClosable: true,
-    });
   };
 
   if (isLoading) {
