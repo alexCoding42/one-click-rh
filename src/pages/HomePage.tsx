@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { API } from 'aws-amplify';
 import { v4 as uuid } from 'uuid';
 import Lottie from 'lottie-react';
-import { AlertStatus, Box, Center, Container, Flex, Text, useToast } from '@chakra-ui/react';
+import { Box, Center, Container, Flex, Text } from '@chakra-ui/react';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 
 import {
@@ -17,9 +17,9 @@ import CreateAppointment from '../components/CreateAppointment';
 import { listSubThemes, listThemes } from '../graphql/queries';
 import { createAppointment } from '../graphql/mutations';
 import { SubTheme, Theme } from '../API';
+import useCustomToast from '../hooks/useCustomToast';
 
 const HomePage: FC = () => {
-  const toast = useToast();
   const history = useHistory();
 
   const [themes, setThemes] = useState<Theme[]>([]);
@@ -33,7 +33,7 @@ const HomePage: FC = () => {
         const allThemes: any = await API.graphql({ query: listThemes });
         setThemes(allThemes.data.listThemes.items);
       } catch (error) {
-        showToast('', FETCH_DB_ERROR, 'error');
+        useCustomToast('', FETCH_DB_ERROR, 'error');
       }
     };
     fetchThemes();
@@ -50,7 +50,7 @@ const HomePage: FC = () => {
           setAllSubThemesOfTheme(filteredSubThemes);
         }
       } catch (error) {
-        showToast('', FETCH_DB_ERROR, 'error');
+        useCustomToast('', FETCH_DB_ERROR, 'error');
       }
     };
     fetchSubThemes();
@@ -74,24 +74,13 @@ const HomePage: FC = () => {
         // @ts-ignore
         authMode: 'AMAZON_COGNITO_USER_POOLS',
       });
-      showToast('', APPOINTMENT_CREATE_SUCCESS, 'success');
+      useCustomToast('', APPOINTMENT_CREATE_SUCCESS, 'success');
       setIsSubmitting(false);
       history.push('/my-appointments');
     } catch (error) {
-      showToast('', APPOINTMENT_CREATE_ERROR, 'error');
+      useCustomToast('', APPOINTMENT_CREATE_ERROR, 'error');
       setIsSubmitting(false);
     }
-  };
-
-  const showToast = (title: string, description: string, status: AlertStatus) => {
-    toast({
-      title,
-      description,
-      status,
-      duration: 5000,
-      position: 'top-right',
-      isClosable: true,
-    });
   };
 
   return (
