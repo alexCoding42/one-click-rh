@@ -1,6 +1,6 @@
 import { AlertStatus, createStandaloneToast } from '@chakra-ui/react';
 
-const useCustomToast = (title: string, description: string, status: AlertStatus) => {
+const useCustomToast = (title: string, description: string, status: AlertStatus): void => {
   const toast = createStandaloneToast();
 
   toast({
